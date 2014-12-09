@@ -2,6 +2,8 @@
 
 I need some way to estimate the i/o of ideas. I'll describe it later. Didn't sleep tonight. :)
 
+The example below may be easier to understand, if you look at my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
+
 ```
 from IdeaLib import Idea, IdeaList
 
@@ -21,20 +23,17 @@ x.plot()
 
 # Done:
 
-## Mean/Median Scenarios
-
-## Best Case Scenarios
-
-## Worst Case Scenarios
-
-## Alignment by Time
-
-## Aligment by Money
-
-## Weighting Quantities by Constant Value
+* Custom scenarios
+* Mean/median scenarios
+* Best case scenarios
+* Worst case scenarios
+* Alignment by time
+* Aligment by money and custom dimensions
+* Weighting quantities by constant value
 
 # ToDo:
 
-## Weighting Quantites by Changing Market Value
-
-## Idea Definition Language Syntax Parsing
+* Write examples of the above
+* Weighting Quantites by Changing Market Value
+* Idea Definition Language Syntax Parsing
+* Make a pip install
