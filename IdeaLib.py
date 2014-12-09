@@ -4,11 +4,30 @@ import datetime
 import copy
 
 class Idea():
-    def __init__(self, plan):
-        self.plan = plan
+    def __init__(self, plan={}):
         self.time_unit = datetime.timedelta(days=1)
         self.money_unit = 'LTL'
         self.start_time = datetime.datetime.today()
+        if type(plan) in [str,unicode]:
+            self.from_idl(plan)
+        else:
+            self.plan = plan
+    def from_idl(self, text):
+        self.__init__()
+        ''' Converts a multiline string to self.plan list of tuples of dicts. '''
+        result = []
+        for i,line in enumerate(text.split('\n')):
+            line = line.strip()
+            first_whitespace = line.find(' ')
+            line_to_dict =  lambda x: dict([attribute.strip().split(' ') for attribute in x.split(',')])
+            if i % 2 == 0:
+                domain = line[first_whitespace:].strip()
+                if ' ' not in domain: # assume it is first one, the idea name
+                    domain += ' 1'    # just so that line_to_dict would work.
+            elif i % 2 == 1:
+                codomain = line[first_whitespace:].strip()
+                result.append((line_to_dict(domain),line_to_dict(codomain)))
+        self.plan = result
     def __str__(self):
         return str(self.plan)
     def __repr__(self):
@@ -92,7 +111,7 @@ class Idea():
         types = set(itertools.chain(*types))
         for i, x in enumerate(self.plan):
             absent_keys = types - set(self.plan[i][0].keys())
-            self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, ['']*(len(absent_keys))))), self.plan[i][1])
+            self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, [[0]]*(len(absent_keys))))), self.plan[i][1])
     def to_df(self, scenario='normal', dates=False, value=False, resample=False, fill=False, silent=False):
         ''' Converts a scenario to DataFrame. '''
         self._plan_convert_index_sets_to_dicts()

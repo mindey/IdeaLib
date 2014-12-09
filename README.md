@@ -35,5 +35,20 @@ x.plot()
 
 * Write examples of the above
 * Weighting Quantites by Changing Market Value
-* Idea Definition Language Syntax Parsing
 * Make a pip install
+
+## Idea Definition Language Syntax Parsing
+```{python}
+from IdeaLib import Idea
+x = Idea('''+= idea1
+-> oranges 20, apples 30
++= seconds 1000, extracting_seeds 1, time 1
+-> orange_seeds 200, apple_seeds 150
++= planting_field 1, days_of_labor 1, years_of_care 10, time 3650
+-> orange_trees 50, apple_trees 100
++= years_of_waiting 1, time 365
+-> oranges 5000, apples 10000
+''')
+x.to_df(dates=True,value=True)
+```
+
