@@ -112,7 +112,7 @@ class Idea():
         for i, x in enumerate(self.plan):
             absent_keys = types - set(self.plan[i][0].keys())
             self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, [[0]]*(len(absent_keys))))), self.plan[i][1])
-    def to_df(self, scenario='normal', dates=False, value=False, resample=False, fill=False, silent=False):
+    def to_df(self, scenario='normal', dates=False, value=False, resample=False, fill=False, silent=False, convert='numeric'):
         ''' Converts a scenario to DataFrame. '''
         self._plan_convert_index_sets_to_dicts()
         self.u = self._plan_values_to_lists()
@@ -129,6 +129,8 @@ class Idea():
         if len(set(itertools.chain(*types))) == 1: index = [i[0] for i in index]; # in the case of only 1 variable-index
         self.df = pd.DataFrame(dict(zip(index,values))).T.reindex(index).fillna(method='ffill').fillna(0)
         self.df.index.names = types[0]
+        if convert == 'numeric':
+            self.df = self.df.convert_objects(convert_numeric=True)
         if dates:
             df = self.df.reset_index()
             df['time'] = df['time'].apply(lambda x: self.time_unit*int(x))
