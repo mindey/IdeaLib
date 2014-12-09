@@ -4,7 +4,7 @@ I need some way to estimate the i/o of ideas. I'll describe it later. Didn't sle
 
 The example below may be easier to understand, if you look at my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
 
-```
+```{python}
 from IdeaLib import Idea, IdeaList
 
 a = Idea([({'time': 10,'money': 0, 'action': '+= idea1'}, {'oranges': [20, 30], 'apples': [30, 11]}), 
