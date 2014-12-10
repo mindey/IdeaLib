@@ -16,16 +16,18 @@ class Idea():
         self.__init__()
         ''' Converts a multiline string to self.plan list of tuples of dicts. '''
         result = []
-        for i,line in enumerate(text.split('\n')):
+        for i,line in enumerate(text.rstrip().lstrip().split('\n')):
             line = line.strip()
             first_whitespace = line.find(' ')
             line_to_dict =  lambda x: dict([attribute.strip().split(' ') for attribute in x.split(',')])
             if i % 2 == 0:
                 domain = line[first_whitespace:].strip()
-                if ' ' not in domain: # assume it is first one, the idea name
-                    domain += ' 1'    # just so that line_to_dict would work.
+                if ' ' not in domain: # just so that line_to_dict would work.
+                    domain += ' 1'   
             elif i % 2 == 1:
                 codomain = line[first_whitespace:].strip()
+                if ' ' not in codomain: # just so that line_to_dict would work.
+                    codomain += ' 1'     
                 result.append((line_to_dict(domain),line_to_dict(codomain)))
         self.plan = result
     def __str__(self):
