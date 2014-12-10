@@ -133,14 +133,30 @@ class Idea():
             self.df = self.df.convert_objects(convert_numeric=True)
         if dates:
             df = self.df.reset_index()
-            df['time'] = df['time'].apply(lambda x: self.time_unit*int(x))
+            df['time'] = df['time'].convert_objects(convert_numeric=True).apply(lambda x: self.time_unit*int(x))
             df['date'] = self.start_time + df['time'].cumsum()
             self.df = df.set_index(self.df.index.names+['date'])
         if value:
             values = zip(self.df.columns, value) if type(value)==list and len(value)==len(self.df.columns) else zip(self.df.columns, len(self.df.columns)*[1])
             self.df['value'] = (self.df*zip(*values)[1]).sum(axis=1)
         if resample:
-            self.df = self.df.reset_index().set_index('date').resample('1A')
+            if type(resample) in [str, unicode]:
+                self.df = self.df.reset_index().set_index('date').resample(resample)
+            else: # just some default resampling
+                self.df = self.df.reset_index().set_index('date')
+                duration = (self.df.index[-1]-self.df.index[0]).total_seconds()
+                if 0 <= duration and duration <= 3600:
+                    self.df.resample('1Min')
+                if 3600 < duration and duration <= 86400:
+                    self.df.resample('1H')
+                if 86400 < duration and duration <= 432000:
+                    self.df.resample('1D')
+                if 432000 < duration and duration <= 12096000:
+                    self.df.resample('1W')
+                if 12096000 < duration and duration <= 47520000:
+                    self.df.resample('1M')
+                if 47520000 < duration:
+                    self.df.resample('1A')
         if fill:
             if fill == 'interpolate':
                 self.df = self.df.apply(pd.Series.interpolate)
@@ -148,8 +164,8 @@ class Idea():
                 self.df = self.df.fillna(method='ffill')
         if not silent:
             return self.df
-    def plot(self):
-        self.to_df(scenario='normal', dates=True, value=True, resample=True, fill=True)['value'].plot()
+    def plot(self, scenario='normal', dates=True, value=True, resample=True, fill=True):
+        self.to_df(scenario=scenario, dates=dates, value=value, resample=resample, fill=fill)['value'].plot()
 
 class IdeaList(list):
     def _compute_data_frames(self):
