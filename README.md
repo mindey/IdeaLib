@@ -52,3 +52,72 @@ x = Idea('''+= idea1
 x.to_df(dates=True,value=True)
 ```
 
+# Introduction to Idea Definition Language (IDL)
+
+Ideas are assumed to be objects that contain an ordered map between action and their expected non-cumulative results.
+
+```
+f: 
+do_x1 -> get_y1
+do_x2 -> get_y2
+...
+```
+
+Internally, we define this ordered map as list of tuples:
+
+```
+Idea([(do, get), 
+      (do, get),
+      ...])
+```
+
+The *do* ad *get* elements are modelled as simple dictionaries with numeric values.
+
+```
+Idea([({'peel': 1, 'time': 2, 'apple': 1}, {'peeled apple': 1}    ),
+      ({'mash': 2, 'strawberry': 1},       {'strawberry jam': 0.2}),
+      ...])
+```
+
+That is enough to define an idea. However, for a human, list of tuples of dictionaries is not necessarily the most convenient way. So, there is a method from_idl(), which tries to create the above-like variable (stored as self.plan) from the following kind of list:
+
+```
+Idea('''
+add: peel 1, time 2, apple 1
+get: peeled_apple 1
+add: mash 2, strawberry 1
+get: strawberry_jam 0.2
+''')
+```
+
+In fact, we can use the words of any language I / O, like:
+
+```
+Idea('''
+入: 剥离皮肤 1, time 2, 苹果 1
+出: 苹果去皮 1
+入: 捣碎 2, 草莓 1
+出: 草莓酱 0.2
+''')
+```
+
+Try the .to_df(), and to_df(dates=True).
+
+```
+i = Idea('''
+入: 剥离皮肤 1, time 2, 苹果 1
+出: 苹果去皮 1
+入: 捣碎 2, 草莓 1
+出: 草莓酱 0.2
+''')
+
+i.to_df(dates=True,value=True)
+```
+
+
+
+
+
+
+
+
