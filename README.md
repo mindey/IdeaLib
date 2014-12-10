@@ -144,7 +144,7 @@ One way is to include the money attribute at each step, which summarizes the val
 出: 草莓酱 [0.2, 0.3, 0.5], money 4
 ```
 
-Another way is to provide the value for each time. The initial assumption is that the values of each item are equal to 1. So, if the value of one peeled apple is 5, and value of one mashed strawberry is 7, then we can pass it like this:
+Another way is to provide the value for each time. The initial assumption is that the values of each item are equal to 1. However, if values are not all equal to 1, we can pass their values once we know the column names, like, say if value of one peeled apple is 5, and value of one mashed strawberry is 7, then we can pass it like this:
 
 ```
 i.to_df().columns #苹果去皮, 草莓酱
