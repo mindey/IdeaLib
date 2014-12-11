@@ -139,7 +139,7 @@ class Idea():
             if type(value)==list and len(value)==len(self.df.columns):
                 values = zip(self.df.columns, value)
             else:
-                print "Length of 'value' parameter is not same as len(df.columns). Assuming values==1."
+                pass #"Length of 'value' parameter is not same as len(df.columns). Assuming values==1."
             self.df['value'] = (self.df*zip(*values)[1]).sum(axis=1)
         if resample:
             if type(resample) in [str, unicode]:
