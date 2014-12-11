@@ -135,7 +135,11 @@ class Idea():
             df['date'] = self.start_time + df['time'].cumsum()
             self.df = df.set_index(self.df.index.names+['date'])
         if value:
-            values = zip(self.df.columns, value) if type(value)==list and len(value)==len(self.df.columns) else zip(self.df.columns, len(self.df.columns)*[1])
+            values = zip(self.df.columns, len(self.df.columns)*[1])
+            if type(value)==list and len(value)==len(self.df.columns):
+                values = zip(self.df.columns, value)
+            else:
+                print "Length of 'value' parameter is not same as len(df.columns). Assuming values==1."
             self.df['value'] = (self.df*zip(*values)[1]).sum(axis=1)
         if resample:
             if type(resample) in [str, unicode]:
