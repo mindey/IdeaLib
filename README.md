@@ -79,7 +79,7 @@ Idea([({'peel': 1, 'time': 2, 'apple': 1}, {'peeled apple': 1}    ),
       ...])
 ```
 
-That is enough to define an idea. However, for a human, list of tuples of dictionaries is not necessarily the most convenient way. So, there is a method from_idl(), which tries to create the above-like variable (stored as self.plan) from the following kind of list:
+That is enough to define an idea (or rather, a simple linear plan). However, for a human, list of tuples of dictionaries is not necessarily the most convenient way. So, there is a method from_idl(), which tries to create the above-like variable (stored as self.plan) from the following kind of list:
 
 ```
 Idea('''

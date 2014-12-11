@@ -38,10 +38,6 @@ class Idea():
             if i == 0: self.view += '' + str(p[0]) + '\n:  ' + str(p[1]) +'\n';
             if i > 0: self.view += '' + str(p[0]) + '\n-> ' + str(p[1]) +'\n';
         return self.view
-    def _plan_convert_index_sets_to_dicts(self):
-        for i, x in enumerate(self.plan):
-            if type(self.plan[i][0]) == set:
-                self.plan[i] = ({'action': ''.join(self.plan[i][0])}, self.plan[i][1])
     def _plan_values_to_lists(self):
         ''' Converts Plan Dictionary Values to Lists '''
         for i, x in enumerate(self.plan):
@@ -116,7 +112,6 @@ class Idea():
             self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, [[0]]*(len(absent_keys))))), self.plan[i][1])
     def to_df(self, scenario='normal', dates=False, value=False, resample=False, fill=False, silent=False, convert='numeric'):
         ''' Converts a scenario to DataFrame. '''
-        self._plan_convert_index_sets_to_dicts()
         self.u = self._plan_values_to_lists()
         self.v = self._plan_add_dummy_index_keys()
         if scenario == 'normal':
@@ -127,7 +122,8 @@ class Idea():
             self.scenario_max_in_min_out()
         if type(scenario) == int:
             self.scenario_n(scenario)
-        types, index, values = zip(*[[t[0].keys(),tuple(t[0].values()), t[1]] for l,t in enumerate(self.p)])
+        # essential piece constructing dataframe:
+        types, index, values = zip(*[[sorted(t[0].keys()),tuple(sorted(t[0].values())), t[1]] for l,t in enumerate(self.p)])
         if len(set(itertools.chain(*types))) == 1: index = [i[0] for i in index]; # in the case of only 1 variable-index
         self.df = pd.DataFrame(dict(zip(index,values))).T.reindex(index).fillna(method='ffill').fillna(0)
         self.df.index.names = types[0]
