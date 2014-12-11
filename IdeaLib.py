@@ -122,11 +122,11 @@ class Idea():
             self.scenario_max_in_min_out()
         if type(scenario) == int:
             self.scenario_n(scenario)
-        # essential piece constructing dataframe:
-        types, index, values = zip(*[[sorted(t[0].keys()),tuple(sorted(t[0].values())), t[1]] for l,t in enumerate(self.p)])
-        if len(set(itertools.chain(*types))) == 1: index = [i[0] for i in index]; # in the case of only 1 variable-index
-        self.df = pd.DataFrame(dict(zip(index,values))).T.reindex(index).fillna(method='ffill').fillna(0)
-        self.df.index.names = types[0]
+        # essential piece constructing dataframe: the index:  tuple(t[0].values()), the values: t[1]
+        d1 = pd.DataFrame.from_records([r[0] for r in self.p])
+        d2 = pd.DataFrame.from_records([r[1] for r in self.p])
+        self.df = pd.concat([d1,d2],axis=1).set_index(list(d1.columns))
+        # Great :)
         if convert == 'numeric':
             self.df = self.df.convert_objects(convert_numeric=True)
         if dates:
