@@ -14,10 +14,15 @@ class Idea():
             self.plan = plan
     def from_idl(self, text):
         self.__init__()
-        ''' Converts a multiline string to self.plan list of tuples of dicts. '''
+        ''' Converts a multiline string to self.plan list of tuples of dicts.
+            vline: the part of line after @ mark sign
+        '''
         result = []
         for i,line in enumerate(text.rstrip().lstrip().split('\n')):
-            line = line.strip()
+            if '@' in line:
+                # for processing value definitions
+                line, vline = line.strip().split('@')
+                line = line.strip(); vline = vline.strip()
             first_whitespace = line.find(' ')
             #line_to_dict =  lambda x: dict([attribute.strip().split(' ') for attribute in x.split(',')])
             line_to_dict =  lambda x: dict([[' '.join(attribute.strip().split(' ')[:-1]), attribute.strip().split(' ')[-1]] for attribute in x.split(',')])
