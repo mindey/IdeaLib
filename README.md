@@ -117,10 +117,10 @@ For example, the expression { '草莓酱': [0.2, 0.3, 0.5] } means that
 Inside the IDL, this is defined as follows: 
 
 ```
-入: 剥离皮肤 1, time [2, 5], 苹果 1
+入: 剥离皮肤 1, time 2/5, 苹果 1
 出: 苹果去皮 1
 入: 捣碎 2, 草莓 1
-出: 草莓酱 [0.2, 0.3, 0.5]
+出: 草莓酱 0.2/0.3/0.5
 ```
 (not yet working, use native format for now)
 
@@ -138,10 +138,10 @@ There are multiple possible I/O scenarios, here, as an example, potentially need
 One way is to include the money attribute at each step, which summarizes the value of the obtained items.
 
 ```
-入: 剥离皮肤 1, time [2, 5], 苹果 1, money 2
+入: 剥离皮肤 1, time 2/5, 苹果 1, money 2
 出: 苹果去皮 1, money 1
 入: 捣碎 2, 草莓 1, money 2
-出: 草莓酱 [0.2, 0.3, 0.5], money 4
+出: 草莓酱 0.2/0.3/0.5, money 4
 ```
 
 Another way is to provide the value for each time. The initial assumption is that the values of each item are equal to 1. However, if values are not all equal to 1, we can pass their values once we know the column names, like, say if value of one peeled apple is 5, and value of one mashed strawberry is 7, then we can pass it like this:
@@ -154,10 +154,10 @@ i.to_df(value=[5, 7])
 Instead of writing like this, we can give the values of things immediately in the IDL:
 
 ```
-入: 剥离皮肤 1, time [2, 5], 苹果 1, money 2 @ 1 1
+入: 剥离皮肤 1, time 2/5, 苹果 1, money 2 @ 1/1
 出: 苹果去皮 1, money 1 @ 1
-入: 捣碎 2, 草莓 1, money 2 @ 4
-出: 草莓酱 [0.2, 0.3, 0.5], money 4 @ 10
+入: 捣碎 2, 草莓 1, money 2 @ 4,, 2/1
+出: 草莓酱 0.2/0.3/0.5, money 4 @ 10
 ```
 (not yet working)
 
