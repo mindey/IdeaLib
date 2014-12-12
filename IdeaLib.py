@@ -19,7 +19,9 @@ class Idea():
         for i,line in enumerate(text.rstrip().lstrip().split('\n')):
             line = line.strip()
             first_whitespace = line.find(' ')
-            line_to_dict =  lambda x: dict([attribute.strip().split(' ') for attribute in x.split(',')])
+            #line_to_dict =  lambda x: dict([attribute.strip().split(' ') for attribute in x.split(',')])
+            line_to_dict =  lambda x: dict([[' '.join(attribute.strip().split(' ')[:-1]), attribute.strip().split(' ')[-1]] for attribute in x.split(',')])
+            split_dict_values = lambda d: dict([(v, d[v].split('/')) for k,v in enumerate(d)])
             if i % 2 == 0:
                 domain = line[first_whitespace:].strip()
                 if ' ' not in domain: # just so that line_to_dict would work.
@@ -28,7 +30,7 @@ class Idea():
                 codomain = line[first_whitespace:].strip()
                 if ' ' not in codomain: # just so that line_to_dict would work.
                     codomain += ' 1'     
-                result.append((line_to_dict(domain),line_to_dict(codomain)))
+                result.append((split_dict_values(line_to_dict(domain)),split_dict_values(line_to_dict(codomain))))
         self.plan = result
     def __str__(self):
         return str(self.plan)
@@ -51,7 +53,7 @@ class Idea():
             for j, y in enumerate(p[i]):
                 for k, z in enumerate(p[i][j]):
                     p[i][j][z] = sum(p[i][j][z])/len(p[i][j][z]) \
-                    if type(self.plan[i][j][z][0]) in [int, float] \
+                    if type(self.plan[i][j][z][0]) in [str, int, float] \
                     else p[i][j][z][len(p[i][j][z])/2]
         self.p = p
         self.scenario = p
@@ -62,12 +64,12 @@ class Idea():
             for j, y in enumerate(p[i]):
                 for k, z in enumerate(p[i][j]):
                     if j == 0: # max in
-                        p[i][j][z] = max(p[i][j][z]) \
-                        if type(self.plan[i][j][z][0]) in [int, float] \
+                        p[i][j][z] = max(p[i][j][z]) \ # it seems max operator works ..
+                        if type(self.plan[i][j][z][0]) in [str, int, float] \ # .. for strings too
                         else p[i][j][z][len(p[i][j][z])/2]
                     if j == 1: # min out
                         p[i][j][z] = min(p[i][j][z]) \
-                        if type(self.plan[i][j][z][0]) in [int, float] \
+                        if type(self.plan[i][j][z][0]) in [str, int, float] \
                         else p[i][j][z][len(p[i][j][z])/2]
         self.p = p
         self.scenario = p
@@ -79,11 +81,11 @@ class Idea():
                 for k, z in enumerate(p[i][j]):
                     if j == 0: # min in
                         p[i][j][z] = min(p[i][j][z]) \
-                        if type(self.plan[i][j][z][0]) in [int, float] \
+                        if type(self.plan[i][j][z][0]) in [str, int, float] \
                         else p[i][j][z][len(p[i][j][z])/2]
                     if j == 1: # max out
                         p[i][j][z] = max(p[i][j][z]) \
-                        if type(self.plan[i][j][z][0]) in [int, float] \
+                        if type(self.plan[i][j][z][0]) in [str, int, float] \
                         else p[i][j][z][len(p[i][j][z])/2]
         self.p = p
         self.scenario = p
@@ -115,10 +117,13 @@ class Idea():
         self.u = self._plan_values_to_lists()
         self.v = self._plan_add_dummy_index_keys()
         if scenario == 'normal':
+            print 'normal'
             self.scenario_mean_values()
         if scenario == 'best':
+            print 'best'
             self.scenario_min_in_max_out()
         if scenario == 'worst':
+            print 'worst'
             self.scenario_max_in_min_out()
         if type(scenario) == int:
             self.scenario_n(scenario)
