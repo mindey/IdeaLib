@@ -117,13 +117,10 @@ class Idea():
         self.u = self._plan_values_to_lists()
         self.v = self._plan_add_dummy_index_keys()
         if scenario == 'normal':
-            print 'normal'
             self.scenario_mean_values()
         if scenario == 'best':
-            print 'best'
             self.scenario_min_in_max_out()
         if scenario == 'worst':
-            print 'worst'
             self.scenario_max_in_min_out()
         if type(scenario) == int:
             self.scenario_n(scenario)
