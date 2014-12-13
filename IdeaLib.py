@@ -117,7 +117,7 @@ class Idea():
         for i, x in enumerate(self.plan):
             absent_keys = types - set(self.plan[i][0].keys())
             self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, [[0]]*(len(absent_keys))))), self.plan[i][1])
-    def to_df(self, scenario='normal', dates=False, value=False, resample=False, fill=False, silent=False, convert='numeric'):
+    def to_df(self, scenario='normal', dates=False, value=False, ivalue=False, ovalue=False, resample=False, fill=False, silent=False, convert='numeric'):
         ''' Converts a scenario to DataFrame. '''
         self.u = self._plan_values_to_lists()
         self.v = self._plan_add_dummy_index_keys()
@@ -141,13 +141,19 @@ class Idea():
             df['time'] = df['time'].convert_objects(convert_numeric=True).apply(lambda x: self.time_unit*int(x))
             df['date'] = self.start_time + df['time'].cumsum()
             self.df = df.set_index(self.df.index.names+['date'])
-        if value:
-            values = zip(self.df.columns, len(self.df.columns)*[1])
-            if type(value)==list and len(value)==len(self.df.columns):
-                values = zip(self.df.columns, value)
-            else:
-                pass #"Length of 'value' parameter is not same as len(df.columns). Assuming values==1."
-            self.df['value'] = (self.df*zip(*values)[1]).sum(axis=1)
+        if value or ovalue:
+            if not ovalue:
+                ovalue = value
+            if type(ovalue)==bool:
+                output_weights = zip(self.df.columns, len(self.df.columns)*[1])
+            if type(ovalue)==list:
+                if len(ovalue) < len(self.df.columns):
+                    ovalue += [0]*(len(self.df.columns)-len(ovalue))
+                else:
+                    ovalue = ovalue[0:len(self.df.columns)]
+            if type(ovalue)==dict:
+                pass
+            self.df['value'] = (self.df*ovalue).sum(axis=1)
         if resample:
             if type(resample) in [str, unicode]:
                 self.df = self.df.reset_index().set_index('date').resample(resample)
@@ -173,8 +179,8 @@ class Idea():
                 self.df = self.df.fillna(method='ffill')
         if not silent:
             return self.df
-    def plot(self, scenario='normal', dates=True, value=True, resample=True, fill=True):
-        self.to_df(scenario=scenario, dates=dates, value=value, resample=resample, fill=fill)['value'].plot()
+    def plot(self, scenario='normal', dates=True, value=True, ivalue=False, ovalue=True, resample=True, fill=True):
+        self.to_df(scenario=scenario, dates=dates, value=value, ivalue=ivalue, ovalue=ovalue, resample=resample, fill=fill)['value'].rename({'value': 'xxx'}).plot()
 
 class IdeaList(list):
     def _compute_data_frames(self):
@@ -193,7 +199,14 @@ class IdeaList(list):
         self._compute_data_frames()
         self._compute_common_index()
         self._reindex_data_frames()
-    def plot(self):
+    def merge(self, variable='value'):
+        self.df = pd.concat([list.__getitem__(self, i).df['value'] for i in range(list.__len__(self))],axis=1)
+        self.df.columns = range(1,len(self.df.columns)+1) # just to correspond to idea natural number
+    def plot(self, kind='value'):
         self.align()
-        for i in range(list.__len__(self)):
-            list.__getitem__(self, i).df['value'].plot()
+        if kind == 'default':
+            for i in range(list.__len__(self)):
+                list.__getitem__(self, i).plot()
+        if kind == 'value':
+            self.merge()
+            self.df.plot(linewidth=2)
