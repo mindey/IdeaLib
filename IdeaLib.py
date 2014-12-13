@@ -1,19 +1,21 @@
 import pandas as pd
+import numpy as np
 import itertools
 import datetime
 import copy
 
 class Idea():
-    def __init__(self, plan={}):
+    def __init__(self, plan={}, iw=1, ow=1):
         self.time_unit = datetime.timedelta(days=1)
         self.money_unit = 'LTL'
         self.start_time = datetime.datetime.today()
+        self.iweights = iw # input weights
+        self.oweights = ow # output weights
         if type(plan) in [str,unicode]:
             self.from_idl(plan)
         else:
             self.plan = plan
     def from_idl(self, text):
-        self.__init__()
         ''' Converts a multiline string to self.plan list of tuples of dicts.
             vline: the part of line after @ mark sign
         '''
@@ -37,6 +39,7 @@ class Idea():
                     codomain += ' 1'     
                 result.append((split_dict_values(line_to_dict(domain)),split_dict_values(line_to_dict(codomain))))
         self.plan = result
+        # self.iweights, self.oweights -- define here later from the text.
     def __str__(self):
         return str(self.plan)
     def __repr__(self):
@@ -117,7 +120,7 @@ class Idea():
         for i, x in enumerate(self.plan):
             absent_keys = types - set(self.plan[i][0].keys())
             self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, [[0]]*(len(absent_keys))))), self.plan[i][1])
-    def to_df(self, scenario='normal', dates=False, value=False, ivalue=False, ovalue=False, resample=False, fill=False, silent=False, convert='numeric'):
+    def to_df(self, scenario='normal', dates=False, value=False, iweights=False, oweights=False, resample=False, fill=False, silent=False, convert='numeric'):
         ''' Converts a scenario to DataFrame. '''
         self.u = self._plan_values_to_lists()
         self.v = self._plan_add_dummy_index_keys()
@@ -130,30 +133,67 @@ class Idea():
         if type(scenario) == int:
             self.scenario_n(scenario)
         # essential piece constructing dataframe: the index:  tuple(t[0].values()), the values: t[1]
-        d1 = pd.DataFrame.from_records([r[0] for r in self.p])
-        d2 = pd.DataFrame.from_records([r[1] for r in self.p])
-        self.df = pd.concat([d1,d2],axis=1).set_index(list(d1.columns))
+        self.d1 = pd.DataFrame.from_records([r[0] for r in self.p])
+        self.d2 = pd.DataFrame.from_records([r[1] for r in self.p])
+        self.df = pd.concat([self.d1,self.d2],axis=1).set_index(list(self.d1.columns))
         # Great :)
         if convert == 'numeric':
             self.df = self.df.convert_objects(convert_numeric=True)
+            self.d1 = self.d1.convert_objects(convert_numeric=True)
+            self.d2 = self.d2.convert_objects(convert_numeric=True)
+        # Will need to make so that value = ovalue - ivalue
+        # Basically:                value = self.d2*ovalue - self.d1*ivalue 
+        # input value
+        if iweights:
+            self.iweights = iweights
+        if type(self.iweights)==int:
+            self.iweights = len(self.d1.columns)*[self.iweights]
+        if type(self.iweights)==bool:
+            self.iweights = len(self.d1.columns)*[1]
+        if type(self.iweights)==list:
+            if len(self.iweights) < len(self.d1.columns):
+                self.iweights += [0]*(len(self.d1.columns)-len(self.iweights))
+            else:
+                self.iweights = self.iweights[0:len(self.d1.columns)]
+        if type(self.iweights)==dict:
+            pass
+        self.d1  = pd.DataFrame(self.d1.values, index=self.df.index, columns=self.d1.columns)
+        self.d1['ivalue'] = (self.d1*self.iweights).sum(axis=1)
+        # output value
+        if oweights:
+            self.oweights = oweights
+        if type(self.oweights)==int:
+            self.oweights = len(self.d2.columns)*[self.oweights]
+        if type(self.oweights)==bool:
+            self.oweights = len(self.d2.columns)*[1]
+        if type(self.oweights)==list:
+            if len(self.oweights) < len(self.df.columns):
+                self.oweights += [0]*(len(self.df.columns)-len(self.oweights))
+            else:
+                self.oweights = self.oweights[0:len(self.df.columns)]
+        if type(self.oweights)==dict:
+            pass
+        self.d2  = pd.DataFrame(self.d2.values, index=self.df.index, columns=self.d2.columns)
+        self.d2['ovalue'] = (self.d2*self.oweights).sum(axis=1)
+        # value
+        if self.iweights and self.oweights:
+            self.df['ivalue'] = self.d1['ivalue']
+            self.df['ovalue'] = self.d2['ovalue']
+            self.df['value'] = self.d2['ovalue']-self.d1['ivalue']
+        elif self.iweights:
+            self.df['ivalue'] = self.d1['ivalue']
+            self.df['ovalue'] = np.nan
+            self.df['value'] = self.d1['ivalue']
+        elif self.oweights:
+            self.df['ivalue'] = np.nan
+            self.df['ovalue'] = self.d2['ovalue']
+            self.df['value'] = self.d2['ovalue']
+
         if dates:
             df = self.df.reset_index()
             df['time'] = df['time'].convert_objects(convert_numeric=True).apply(lambda x: self.time_unit*int(x))
             df['date'] = self.start_time + df['time'].cumsum()
             self.df = df.set_index(self.df.index.names+['date'])
-        if value or ovalue:
-            if not ovalue:
-                ovalue = value
-            if type(ovalue)==bool:
-                output_weights = zip(self.df.columns, len(self.df.columns)*[1])
-            if type(ovalue)==list:
-                if len(ovalue) < len(self.df.columns):
-                    ovalue += [0]*(len(self.df.columns)-len(ovalue))
-                else:
-                    ovalue = ovalue[0:len(self.df.columns)]
-            if type(ovalue)==dict:
-                pass
-            self.df['value'] = (self.df*ovalue).sum(axis=1)
         if resample:
             if type(resample) in [str, unicode]:
                 self.df = self.df.reset_index().set_index('date').resample(resample)
@@ -179,13 +219,13 @@ class Idea():
                 self.df = self.df.fillna(method='ffill')
         if not silent:
             return self.df
-    def plot(self, scenario='normal', dates=True, value=True, ivalue=False, ovalue=True, resample=True, fill=True):
-        self.to_df(scenario=scenario, dates=dates, value=value, ivalue=ivalue, ovalue=ovalue, resample=resample, fill=fill)['value'].rename({'value': 'xxx'}).plot()
+    def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True):
+        self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill)['value'].plot()
 
 class IdeaList(list):
     def _compute_data_frames(self):
         for i in range(list.__len__(self)):
-            list.__getitem__(self, i).to_df(scenario='normal', dates=True, value=True, resample=True, fill=True, silent=True)
+            list.__getitem__(self, i).to_df(scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, silent=True)
     def _compute_common_index(self):
         if not list.__len__(self) > 0:
             return False
@@ -204,9 +244,9 @@ class IdeaList(list):
         self.df.columns = range(1,len(self.df.columns)+1) # just to correspond to idea natural number
     def plot(self, kind='value'):
         self.align()
-        if kind == 'default':
-            for i in range(list.__len__(self)):
-                list.__getitem__(self, i).plot()
         if kind == 'value':
             self.merge()
             self.df.plot(linewidth=2)
+        if kind == 'default':
+            for i in range(list.__len__(self)):
+                list.__getitem__(self, i).plot()
