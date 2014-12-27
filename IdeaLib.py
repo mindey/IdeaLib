@@ -28,7 +28,7 @@ class Idea():
             first_whitespace = line.find(' ')
             #line_to_dict =  lambda x: dict([attribute.strip().split(' ') for attribute in x.split(',')])
             line_to_dict =  lambda x: dict([[' '.join(attribute.strip().split(' ')[:-1]), attribute.strip().split(' ')[-1]] for attribute in x.split(',')])
-            split_dict_values = lambda d: dict([(v, d[v].split('/')) for k,v in enumerate(d)])
+            split_dict_values = lambda d: dict([(v, d[v].split('\\')) for k,v in enumerate(d)])
             if i % 2 == 0:
                 domain = line[first_whitespace:].strip()
                 if ' ' not in domain: # just so that line_to_dict would work.
