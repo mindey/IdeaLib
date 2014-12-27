@@ -246,7 +246,7 @@ class IdeaList(list):
         self.align()
         if kind == 'value':
             self.merge()
-            self.df.plot(linewidth=2)
+            self.df.bfill().plot(linewidth=2)
         if kind == 'default':
             for i in range(list.__len__(self)):
                 list.__getitem__(self, i).plot()
