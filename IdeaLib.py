@@ -120,7 +120,7 @@ class Idea():
         for i, x in enumerate(self.plan):
             absent_keys = types - set(self.plan[i][0].keys())
             self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, [[0]]*(len(absent_keys))))), self.plan[i][1])
-    def to_df(self, scenario='normal', dates=False, value=False, iweights=False, oweights=False, resample=False, fill=False, silent=False, convert='numeric'):
+    def to_df(self, scenario='normal', dates=False, value=False, iweights=False, oweights=False, resample=False, fill=False, silent=False, convert='numeric', cumsum=False):
         ''' Converts a scenario to DataFrame. '''
         self.u = self._plan_values_to_lists()
         self.v = self._plan_add_dummy_index_keys()
@@ -216,6 +216,10 @@ class Idea():
                 self.df = self.df.apply(pd.Series.interpolate)
             else:
                 self.df = self.df.fillna(method='ffill')
+        if cumsum:
+            self.df['ivalue_sum'] = self.df['ivalue'].cumsum()
+            self.df['ovalue_sum'] = self.df['ovalue'].cumsum()
+            self.df['value_sum'] = self.df['value'].cumsum()
         if not silent:
             return self.df
     def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, cumsum=True):
