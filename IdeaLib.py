@@ -188,7 +188,6 @@ class Idea():
             self.df['ivalue'] = np.nan
             self.df['ovalue'] = self.d2['ovalue']
             self.df['value'] = self.d2['ovalue']
-
         if dates:
             df = self.df.reset_index()
             df['time'] = df['time'].convert_objects(convert_numeric=True).apply(lambda x: self.time_unit*int(x))
@@ -219,8 +218,12 @@ class Idea():
                 self.df = self.df.fillna(method='ffill')
         if not silent:
             return self.df
-    def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True):
-        self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill)['value'].plot()
+    def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, cumsum=True):
+        if cumsum:
+            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill)['value'].cumsum().plot()
+        else:
+            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill)['value'].plot()
+
 
 class IdeaList(list):
     def _compute_data_frames(self):
