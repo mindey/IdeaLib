@@ -72,13 +72,13 @@ class Idea():
             for j, y in enumerate(p[i]):
                 for k, z in enumerate(p[i][j]):
                     if j == 0: # max in.  # it seems max operator works .. for strings too
-                        p[i][j][z] = max(p[i][j][z]) \
+                        p[i][j][z] = max([float(val) for val in p[i][j][z]]) \
                         if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else p[i][j][z][len(p[i][j][z])/2]
+                        else float(p[i][j][z][len(p[i][j][z])/2])
                     if j == 1: # min out
-                        p[i][j][z] = min(p[i][j][z]) \
+                        p[i][j][z] = min([float(val) for val in p[i][j][z]]) \
                         if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else p[i][j][z][len(p[i][j][z])/2]
+                        else float(p[i][j][z][len(p[i][j][z])/2])
         self.p = p
         self.scenario = p
     def scenario_min_in_max_out(self):
@@ -88,13 +88,13 @@ class Idea():
             for j, y in enumerate(p[i]):
                 for k, z in enumerate(p[i][j]):
                     if j == 0: # min in
-                        p[i][j][z] = min(p[i][j][z]) \
+                        p[i][j][z] = min([float(val) for val in p[i][j][z]]) \
                         if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else p[i][j][z][len(p[i][j][z])/2]
+                        else float(p[i][j][z][len(p[i][j][z])/2])
                     if j == 1: # max out
-                        p[i][j][z] = max(p[i][j][z]) \
+                        p[i][j][z] = max([float(val) for val in p[i][j][z]]) \
                         if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else p[i][j][z][len(p[i][j][z])/2]
+                        else float(p[i][j][z][len(p[i][j][z])/2])
         self.p = p
         self.scenario = p
     def scenario_n(self,n=0):
