@@ -150,6 +150,8 @@ class Idea():
             self.iweights = len(self.d1.columns)*[self.iweights]
         if type(self.iweights)==bool:
             self.iweights = len(self.d1.columns)*[1]
+        if type(self.iweights)==dict:
+            self.iweights = [self.iweights[key] if key in self.iweights.keys() else 0 for key in self.df.index.names]
         if type(self.iweights)==list:
             if len(self.iweights) < len(self.d1.columns):
                 self.iweights += [0]*(len(self.d1.columns)-len(self.iweights))
@@ -166,6 +168,8 @@ class Idea():
             self.oweights = len(self.d2.columns)*[self.oweights]
         if type(self.oweights)==bool:
             self.oweights = len(self.d2.columns)*[1]
+        if type(self.oweights)==dict:
+            self.oweights = [self.oweights[key] if key in self.oweights.keys() else 0 for key in self.df.columns]
         if type(self.oweights)==list:
             if len(self.oweights) < len(self.df.columns):
                 self.oweights += [0]*(len(self.df.columns)-len(self.oweights))
