@@ -228,9 +228,9 @@ class Idea():
             return self.df
     def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, cumsum=True):
         if cumsum:
-            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill)['value'].cumsum().plot()
+            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': scenario+' scenario'})[scenario+' scenario'].cumsum().plot(legend=True)
         else:
-            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill)['value'].plot()
+            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': scenario+' scenario'})[scenario+' scenario'].plot(legend=True)
 
 
 class IdeaList(list):
