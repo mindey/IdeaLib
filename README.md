@@ -92,8 +92,6 @@ Inside the IDL, this is defined as follows:
 入: 捣碎 2, 草莓 1
 出: 草莓酱 0.2\0.3\0.5
 ```
-(not yet working, use native format for now)
-
 Each of the values in such a list define a possible scenario. The data is encoded like this:
 
 ```
@@ -130,7 +128,7 @@ Instead of writing like this, we can give the values of things immediately in th
 出: 草莓酱 0.2\0.3\0.5, money 4 @ 10
 ```
 
-More info: 
+More info: [http://mindey.com/IdeaLib.html](http://mindey.com/IdeaLib.html)
 
 
 
