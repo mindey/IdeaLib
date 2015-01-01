@@ -78,10 +78,12 @@ i.to_df(dates=True,value=True)
 However, a language can have other usefulness. In order to define several possible values, in the native data structure we use lists as values of dictionaries. 
 
 ## Expressing different possible I / O scenarios
-For example, the expression { '草莓酱': [0.2, 0.3, 0.5] } means that 
-* 0-th scenario is we get 0.2 strawberry jam
-* 1-th scenario is we get 0.3 strawberry jam
-* 2-th scenario is we get 0.5 strawberry jam
+For example, the expression { '草莓酱': [0.2, 0.3, 0.5] } means that
+
+ * 0-th scenario is we get 0.2 strawberry jam
+ * 1-th scenario is we get 0.3 strawberry jam
+ * 2-th scenario is we get 0.5 strawberry jam
+
 Inside the IDL, this is defined as follows: 
 
 ```
