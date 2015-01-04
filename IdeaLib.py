@@ -230,15 +230,17 @@ class Idea():
             self.df['value_sum'] = self.df['value'].cumsum()
         if not silent:
             return self.df
-    def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, cumsum=True):
+    def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, cumsum=True, legend=''):
+        if not legend:
+            legend = scenario+' scenario'
         if cumsum:
-            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': scenario+' scenario'})[scenario+' scenario'].cumsum().plot(legend=True)
+            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': legend})[legend].cumsum().plot(legend=True)
         else:
-            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': scenario+' scenario'})[scenario+' scenario'].plot(legend=True)
-    def plots(self):
-        self.plot(scenario="worst")
-        self.plot(scenario="normal")
-        self.plot(scenario="best")
+            self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': legend})[legend].plot(legend=True)
+    def plots(self, legend=''):
+        self.plot(scenario="worst", legend=(legend+" (worst scenario)").strip())
+        self.plot(scenario="normal", legend=(legend+" (normal scenario)").strip())
+        self.plot(scenario="best", legend=(legend+" (best scenario)").strip())
 
 class IdeaList(list):
     def _compute_data_frames(self):
@@ -260,11 +262,15 @@ class IdeaList(list):
     def merge(self, variable='value'):
         self.df = pd.concat([list.__getitem__(self, i).df['value'] for i in range(list.__len__(self))],axis=1)
         self.df.columns = range(1,len(self.df.columns)+1) # just to correspond to idea natural number
-    def plot(self, kind='value'):
+    def plot(self, kind='default'):
         self.align()
-        if kind == 'value':
-            self.merge()
-            self.df.bfill().plot(linewidth=2)
         if kind == 'default':
             for i in range(list.__len__(self)):
-                list.__getitem__(self, i).plot()
+                list.__getitem__(self, i).plot(legend='Idea %s (normal scenario)'%i, scenario='normal')
+        if kind == 'value': # (currently buggy)
+            self.merge()
+            self.df.bfill().plot(linewidth=2)
+    def plots(self):
+        for i in range(list.__len__(self)):
+            list.__getitem__(self, i).plots(legend='Idea %s'%i)
+
