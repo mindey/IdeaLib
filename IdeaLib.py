@@ -194,7 +194,11 @@ class Idea():
             self.df['value'] = self.d2['ovalue']
         if dates:
             df = self.df.reset_index()
+            if 'time' not in df.columns:
+                df['time'] = 0
             df['time'] = df['time'].convert_objects(convert_numeric=True).apply(lambda x: self.time_unit*int(x))
+            # Adding nanosecond, if the time is zero:
+            df['time'] = df['time'].apply(lambda x: datetime.timedelta(milliseconds=0.001) if x == 0 else x)
             df['date'] = self.start_time + df['time'].cumsum()
             self.df = df.set_index(self.df.index.names+['date'])
         if resample:
@@ -231,14 +235,17 @@ class Idea():
             self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': scenario+' scenario'})[scenario+' scenario'].cumsum().plot(legend=True)
         else:
             self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': scenario+' scenario'})[scenario+' scenario'].plot(legend=True)
-
+    def plots(self):
+        self.plot(scenario="worst")
+        self.plot(scenario="normal")
+        self.plot(scenario="best")
 
 class IdeaList(list):
     def _compute_data_frames(self):
         for i in range(list.__len__(self)):
             list.__getitem__(self, i).to_df(scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, silent=True)
     def _compute_common_index(self):
-        if not list.__len__(self) > 0:
+        if list.__len__(self) <= 0:
             return False
         self.index = list.__getitem__(self,0).df.index
         for i in range(1,list.__len__(self)):
