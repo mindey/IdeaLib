@@ -1,0 +1,15 @@
+bin
+develop-eggs
+dist
+downloads
+eggs
+parts
+src/*.egg-info
+build/*
+lib
+lib64
+IdeaLib.egg-info/*
+*.pyc
+*.pyo
+*.swp
+*.py~
