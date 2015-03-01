@@ -1,6 +1,6 @@
 # IdeaLib
 
-I need some way to estimate the i/o of ideas. I'll describe it later. Didn't sleep tonight. :)
+I [need](http://www.halfbakery.com/idea/How_20to_20Analyze_20Ideas_20Quantitatively_3f) some way to estimate the i/o of ideas. I'll describe it later. Didn't sleep tonight. :)
 
 The example below may be easier to understand, if you look at [IDL description](http://mindey.com/IdeaLib.html) my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
 
@@ -52,9 +52,9 @@ That is enough to define an idea (or rather, a simple linear plan). However, for
 ```
 Idea(r'''
 add: peel 1, time 2, apple 1
-get: peeled_apple 1
+get: peeled apple 1
 add: mash 2, strawberry 1
-get: strawberry_jam 0.2
+get: strawberry jam 0.2
 ''')
 ```
 
@@ -72,7 +72,7 @@ i = Idea(r'''
 Try the .to_df(), and to_df(dates=True).
 
 ```
-i.to_df(dates=True,value=True)
+i.to_df(dates=True)
 ```
 
 However, a language can have other usefulness. In order to define several possible values, in the native data structure we use lists as values of dictionaries. 
@@ -103,23 +103,32 @@ There are multiple possible I/O scenarios, here, as an example, potentially need
 
 ## Expressing values of things
 
-One way is to include the money attribute at each step, which summarizes the value of the obtained items.
+One way is to provide the value for each I/O item. The initial assumption is that the values of each item are equal to 1. However, if the actual values are not all equal to 1, we can pass their values once we know the column names, like, say if value of one peeled apple is 5, and value of one mashed strawberry is 7, then we can pass it like this:
 
 ```
-入: 剥离皮肤 1, time 2\5, 苹果 1, money 2
-出: 苹果去皮 1, money 1
-入: 捣碎 2, 草莓 1, money 2
-出: 草莓酱 0.2\0.3\0.5, money 4
+Idea(r'''
+add: peel 1, time 2, apple 1
+get: peeled apple 1
+add: mash 2, strawberry 1
+get: strawberry jam 0.2
+''', ow={'peeled apple': 5, 'strawberry jam': 7}).to_df(dates=True)
 ```
 
-Another way is to provide the value for each time. The initial assumption is that the values of each item are equal to 1. However, if values are not all equal to 1, we can pass their values once we know the column names, like, say if value of one peeled apple is 5, and value of one mashed strawberry is 7, then we can pass it like this:
+If the weights are provided, the defaults of 1 for other items are automatically reset to zero, and only the objects with value are considered.
+
+It is also possible to include the weights for the input items the same way. For example, assume that we value things in dollars,, and apple costs 1$, and strawberry costs 0.1$. Then we could write:
 
 ```
-i.to_df().columns #苹果去皮, 草莓酱
-i.to_df(value=[5, 7])
+Idea(r'''
+add: peel 1, time 2, apple 1
+get: peeled apple 1
+add: mash 2, strawberry 1
+get: strawberry jam 0.2
+''', iw={'apple': 1, 'strawberry': 0.1},\
+     ow={'peeled apple': 5, 'strawberry jam': 7}).to_df(dates=True)
 ```
 
-Instead of writing like this, we can give the values of things immediately in the IDL:
+Soon, it will be possible to define the values for the items at each step. We may use the at (@) sign for that. For example:
 
 ```
 入: 剥离皮肤 1, time 2\5, 苹果 1, money 2 @ 1\1
