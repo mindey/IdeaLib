@@ -15,6 +15,12 @@ Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://git
 
 ## Create Ideas
 
+All ODD numbered rows are considered to be INPUTS.
+
+All EVEN numbered rows are considered to be OUTPUTS.
+
+In parsing, any prefixes like i1:, o2:,.. before the first space are removed.
+
 ### With Custom Weights
 ```
 from IdeaLib import Idea, IdeaList
@@ -37,7 +43,7 @@ iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
 ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5}
 ```
 
-### With Unitary Weights
+### With Default Weights
 Example of idea with default **relative values** of "1" per every item.
 ```
 idea2 = Idea(r'''
