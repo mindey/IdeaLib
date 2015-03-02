@@ -14,10 +14,12 @@ pip install IdeaLib
 Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://github.com/numpy/numpy), not included in requirements.
 
 ## Create Ideas
+
+### With Weights
 ```
 from IdeaLib import Idea, IdeaList
 
-i = Idea(r'''
+idea = Idea(r'''
 i1: time 0.003\0.004, loaf of black bread 1, butter grams 15, tomato 0.5, salt grams 0.4
 o1: sandwitch 1
 i2: eggs 2\5, scrambling actions 50\100, time 0.003\0.005
@@ -27,8 +29,17 @@ o3: cup of coffee 1\1.5
 ''', iw=1, ow=1)
 ```
 
+Example of defining **relative values** in some currency:
 ```
-i2 = Idea(r'''
+iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
+    'tomato': 0.2, 'salt grams': 0.001, 'eggs': 0.2, \
+    'coffee teaspoon': 0.002, 'liters of water': 0.001}
+ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5}
+```
+
+Example of idea with default **relative values** of "1" per every item.
+```
+idea2 = Idea(r'''
 入: 剥离皮肤 1, time 2, 苹果 1
 出: 苹果去皮 1
 入: 捣碎 2, 草莓 1
@@ -39,20 +50,23 @@ i2 = Idea(r'''
 ## Generate scenarios
 
 ```
-i.to_df(scenario='normal')
-i.to_df(scenario='best')
-i.to_df(scenario='worst')
+idea.to_df(scenario='normal')
+idea.to_df(scenario='best')
+idea.to_df(scenario='worst')
 ```
 
 ## Generate plots
 ```
-i.plot(scenario='normal')
-i.plots() # generates all scenarios in one graph
+idea.plot(scenario='normal')
+idea2.plot(scenario='normal')
+```
+```
+idea.plots() # all scenarios in one graph
 ```
 
 ## Combine ideas into lists
 ```
-ideas = IdeaList([i, i2])
+ideas = IdeaList([idea, idea2])
 ```
 ## Choose from ideas
 ```
@@ -69,6 +83,11 @@ o2: scrambled egg servings 1
 i3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
 o3: cup of coffee 1\1.5
 ```
+
+All ODD numbered rows are considered to be INPUTS.
+All EVEN numbered rows are considered to be OUTPUTS.
+
+Prefix of i1:, o2:,.. is any string without a space. In parsing, all things before the first space are removed.
 
 Backslash signs indicate different scenarios. E.g., in best case scenario, we expect spending 0.003 day for making sandwitch, in worst -- 0.004 day.
 
