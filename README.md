@@ -126,7 +126,12 @@ Call .plot() or .plots() for several ideas in the same execution cell in IPython
 ideas = IdeaList([idea, idea2])
 ```
 
-## Choose from ideas (not yet available!)
+## Plot multiple ideas
+```
+ideas.plots()
+```
+
+## Choose from ideas
 ```{Python}
 ideas.choice(preferences={'sandwitch': 0.1, 'coffee': 0.9}, capital=100)
 ```
