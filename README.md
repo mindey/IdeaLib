@@ -32,6 +32,9 @@ The ``: `` (colon and whitespace) is currently a separator for label of input/ou
 This way, adding ``.to_df()`` immediately after an idea is a way to immediately preview your result. 
 
 ### Beyond Minimal
+
+**General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
+
 ```{Python}
 Idea(r'''
 label1: do1 100\200, time 10\15
@@ -45,7 +48,25 @@ Use ``to_df()`` or ``.to_df(dates=True, scenario='worst')`` (could be 'best', 'n
 
 ### With Custom Weights
 
-**General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
+Weights for items can be provided as value vectors ``iw=1`` (input weights, ``ow=1`` (output weights), which are the defaults, but can be defined by providing a different scalar value, or a dictionary, for example:
+
+```
+Idea(r'''
+add: peel 1, time 2, apple 1
+get: peeled apple 1
+add: mash 2, strawberry 1
+get: strawberry jam 0.2
+''', iw={'apple': 1, 'strawberry': 0.1},\
+     ow={'peeled apple': 5, 'strawberry jam': 7}).to_df(dates=True)
+```
+
+### Assembling lists of ideas
+
+Assembling lists of ideas requires writing them into variables first. For example.
+
+#### Breakkfast
+
+Idea with a realistic **relative values** in some currency:
 
 ```{Python}
 idea = Idea(r'''
@@ -55,19 +76,18 @@ i2: eggs 2\5, scrambling actions 50\100, time 0.003\0.005
 o2: scrambled egg servings 1
 input3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
 output3: cup of coffee 1\1.5
-''', iw=1, ow=1)
-```
-
-Example of defining **relative values** in some currency:
-```{Python}
-iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
+''', iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
     'tomato': 0.2, 'salt grams': 0.001, 'eggs': 0.2, \
-    'coffee teaspoon': 0.002, 'liters of water': 0.001}
-ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5}
+    'coffee teaspoon': 0.002, 'liters of water': 0.001}, \
+     ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5})
+idea.to_df(dates=True)
 ```
 
-### With Default Weights
-Example of idea with default **relative values** of "1" per every item.
+```{Python}
+```
+
+### Strawberry Jam
+Idea with default **relative values** of "1" per every item.
 ```{Python}
 idea2 = Idea(r'''
 入: 剥离皮肤 1, time 2, 苹果 1
