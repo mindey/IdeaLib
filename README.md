@@ -18,7 +18,7 @@ Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://git
 ## Create Ideas
 
 ### Minimal
-```
+```{Python}
 from IdeaLib import Idea, IdeaList
 Idea(r'''
 : do 100
@@ -31,7 +31,7 @@ The ``: `` (colon and whitespace) is currently a separator for label of input/ou
 This way, adding ``.to_df()`` or ``.to_df(dates=True)``, or calling ``.plot()`` or ``.plots()`` immediately after an idea is a way to immediately preview your result. Use this way rather than saving Idea instance it into a variable in order to get a preview immediately as you compose the content of idea. Recommend using IPython Notebook for that.
 
 ### Beyond Minimal
-```
+```{Python}
 Idea(r'''
 label1: do1 100\200, time 10\15
 label2: profit 1000
@@ -44,7 +44,7 @@ label4: profit 10000\20000, waste 100\50
 
 **General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
 
-```
+```{Python}
 idea = Idea(r'''
 i1: time 0.003\0.004, loaf of black bread 1, butter grams 15, tomato 0.5, salt grams 0.4
 o1: sandwitch 1
@@ -56,7 +56,7 @@ output3: cup of coffee 1\1.5
 ```
 
 Example of defining **relative values** in some currency:
-```
+```{Python}
 iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
     'tomato': 0.2, 'salt grams': 0.001, 'eggs': 0.2, \
     'coffee teaspoon': 0.002, 'liters of water': 0.001}
@@ -65,7 +65,7 @@ ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5}
 
 ### With Default Weights
 Example of idea with default **relative values** of "1" per every item.
-```
+```{Python}
 idea2 = Idea(r'''
 入: 剥离皮肤 1, time 2, 苹果 1
 出: 苹果去皮 1
@@ -76,7 +76,7 @@ idea2 = Idea(r'''
 
 ## Generate scenarios
 
-```
+```{Python}
 idea.to_df(scenario='normal')
 idea.to_df(scenario='best', dates=True)
 idea.to_df(scenario='worst', dates=True)
@@ -84,25 +84,25 @@ idea.to_df(scenario='worst', dates=True)
 Recommend using ``dates=True`` whenever you have **time** in at least one of your inputs.
 
 ## Generate plots
-```
+```{Python}
 idea.plot()
 idea2.plot(scenario='best')
 ```
 
 Plotting all scenarios in one graph:
-```
+```{Python}
 idea.plots()
 ```
 
 Call .plot() or .plots() for several ideas in the same execution cell in IPython Notebook to combine them automagically.
 
 ## Combine ideas into lists
-```
+```{Python}
 ideas = IdeaList([idea, idea2])
 ```
 
 ## Choose from ideas
-```
+```{Python}
 ideas.choice(preferences={'sandwitch': 0.1, 'coffee': 0.9}, capital=100)
 ```
 (produce weighted lists of which ideas to invest to, in what proportions)
@@ -127,7 +127,7 @@ The default assumption is that the project starts now, but you can change that b
 
 The default value weights for the value of i/o (input/output) are considered to be equal to "1", and ``iw, ow`` params are optional. You can redefine them by providing the weighting vectors with ``iw`` and ``ow`` parameters, in the Idea constructor. Defining at least one of the values resets the defaults of others to "0". for example: 
 
-```
+```{Python}
 iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
     'tomato': 0.2, 'salt grams': 0.001, 'eggs': 0.2, 'scrambling actions': 0, \
     'coffee teaspoon': 0.002, 'liters of water': 0.001}
@@ -135,10 +135,6 @@ ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5}
 ```
 
 So, here you would not necessarily need to type in ``'scrambling actions': 0``, because it (and all other defaults) would be reset to "0", if at least one value in ``iw`` dictionary is provided.
-
-
-
-
 
 # Idea Definition Language
 
@@ -155,7 +151,7 @@ do_x2 -> get_y2
 
 Internally, we define this ordered map as list of tuples:
 
-```
+```{Python}
 Idea([(do, get), 
       (do, get),
       ...])
@@ -163,7 +159,7 @@ Idea([(do, get),
 
 The *do* ad *get* elements are modelled as simple dictionaries with numeric values.
 
-```
+```{Python}
 Idea([({'peel': 1, 'time': 2, 'apple': 1}, {'peeled apple': 1}    ),
       ({'mash': 2, 'strawberry': 1},       {'strawberry jam': 0.2}),
       ...])
@@ -171,7 +167,7 @@ Idea([({'peel': 1, 'time': 2, 'apple': 1}, {'peeled apple': 1}    ),
 
 That is enough to define an idea (or rather, a simple linear plan). However, for a human, list of tuples of dictionaries is not necessarily the most convenient way. So, there is a method from_idl(), which tries to create the above-like variable (stored as self.plan) from the following kind of list:
 
-```
+```{Python}
 Idea(r'''
 add: peel 1, time 2, apple 1
 get: peeled apple 1
@@ -182,7 +178,7 @@ get: strawberry jam 0.2
 
 In fact, we can use the words of any human language I/O, like the below. 
 
-```
+```{Python}
 i = Idea(r'''
 入: 剥离皮肤 1, time 2, 苹果 1
 出: 苹果去皮 1
@@ -193,7 +189,7 @@ i = Idea(r'''
 
 Try the .to_df(), and to_df(dates=True).
 
-```
+```{Python}
 i.to_df(dates=True)
 ```
 
@@ -220,7 +216,7 @@ The reason why I chose the backslash, is that I will want to define formulas for
 
 The IDL input above generates the following data is encoded like this:
 
-```
+```{Python}
 self.plan = [({'剥离皮肤': 1, 'time': [2, 5], '苹果': 1}, {'苹果去皮': 1}    ),
              ({'捣碎': 2, '草莓': 1},       {'草莓酱': [0.2, 0.3, 0.5]})])
 ```
@@ -231,7 +227,7 @@ There are multiple possible I/O scenarios, here, as an example, potentially need
 
 One way is to provide the value for each I/O item is by simple weighting. The initial assumption is that the weights for each item are equal to 1. However, if we are not okay with the default, we can pass specific using a dictionary with coinciding keys. For example, if the value of one peeled apple is 5, and value of one mashed strawberry is 7, then we can pass it using **ow** argument in the constructor, like this:
 
-```
+```{Python}
 Idea(r'''
 add: peel 1, time 2, apple 1
 get: peeled apple 1
@@ -244,7 +240,7 @@ If the weights are provided, the defaults of 1 for other items are automatically
 
 It is also possible to include the weights for the input items the same way, by using **iw** argument. For example, assume that we value things in dollars, and apple costs 1$, and strawberry costs 0.1$. Then we could write:
 
-```
+```{Python}
 Idea(r'''
 add: peel 1, time 2, apple 1
 get: peeled apple 1
