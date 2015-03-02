@@ -15,25 +15,29 @@ Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://git
 
 ## Create Ideas
 
-All ODD numbered rows are considered to be INPUTS.
-
-All EVEN numbered rows are considered to be OUTPUTS.
-
-In parsing, any prefixes like i1:, o2:,.. before the first space are removed.
+### Minimal
+```
+from IdeaLib import Idea, IdeaList
+i = Idea(r'''
+do1 100
+profit 1000
+''')
+```
 
 ### With Custom Weights
 ```
-from IdeaLib import Idea, IdeaList
 
 idea = Idea(r'''
 i1: time 0.003\0.004, loaf of black bread 1, butter grams 15, tomato 0.5, salt grams 0.4
 o1: sandwitch 1
 i2: eggs 2\5, scrambling actions 50\100, time 0.003\0.005
 o2: scrambled egg servings 1
-i3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
-o3: cup of coffee 1\1.5
+input3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
+output3: cup of coffee 1\1.5
 ''', iw=1, ow=1)
 ```
+
+**General rule:** _odd_ rows are _inputs_. _even_ rows are _outputs. Prefixes are custom.
 
 Example of defining **relative values** in some currency:
 ```
