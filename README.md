@@ -28,7 +28,7 @@ Idea(r'''
 
 The ``: `` (colon and whitespace) is currently a separator for label of input/output.
 
-This way, adding ``.to_df()`` or ``.to_df(dates=True)``, or calling ``.plot()`` or ``.plots()`` immediately after an idea is a way to immediately preview your result. Use this way rather than saving Idea instance it into a variable in order to get a preview immediately as you compose the content of idea. Recommend using IPython Notebook for that.
+This way, adding ``.to_df()`` immediately after an idea is a way to immediately preview your result. 
 
 ### Beyond Minimal
 ```{Python}
@@ -39,6 +39,8 @@ label3: do2 10\15, time 15\20
 label4: profit 10000\20000, waste 100\50
 ''').to_df(dates=True) #.plots()
 ```
+
+Use ``to_df()`` or ``.to_df(dates=True)``, or calling ``.plot()`` or ``.plots()`` this way rather than saving Idea instance it into a variable in order to get a preview immediately as you compose the content of idea. Recommend using IPython Notebook for that.
 
 ### With Custom Weights
 
