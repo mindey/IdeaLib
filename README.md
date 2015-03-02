@@ -11,7 +11,8 @@ This is basically an idea of a library to leverage our decisions on the database
 ```
 pip install IdeaLib
 ```
-or simply ``wget https://raw.githubusercontent.com/Mindey/IdeaLib/master/IdeaLib/IdeaLib.py``
+or simply
+``wget https://raw.githubusercontent.com/Mindey/IdeaLib/master/IdeaLib/IdeaLib.py``
 
 Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://github.com/numpy/numpy), not included in requirements.
 
