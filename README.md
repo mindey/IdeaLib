@@ -72,22 +72,18 @@ Idea with a realistic **relative values** in some currency:
 idea = Idea(r'''
 i1: time 0.003\0.004, loaf of black bread 1, butter grams 15, tomato 0.5, salt grams 0.4
 o1: sandwitch 1
-i2: eggs 2\5, scrambling actions 50\100, time 0.003\0.005
-o2: scrambled egg servings 1
+in2: eggs 2\5, scrambling actions 50\100, time 0.003\0.005
+out2: scrambled egg servings 1
 input3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
 output3: cup of coffee 1\1.5
 ''', iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
     'tomato': 0.2, 'salt grams': 0.001, 'eggs': 0.2, \
     'coffee teaspoon': 0.002, 'liters of water': 0.001}, \
      ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5})
-idea.to_df(dates=True)
 ```
 
-```{Python}
-```
-
-### Strawberry Jam
-Idea with default **relative values** of "1" per every item.
+#### Strawberry Jam
+Just another idea with default **relative values** of "1" per every item.
 ```{Python}
 idea2 = Idea(r'''
 入: 剥离皮肤 1, time 2, 苹果 1
