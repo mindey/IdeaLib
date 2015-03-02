@@ -58,12 +58,16 @@ Recommend using ``dates=True`` whenever you have **time** in at least one of you
 
 ## Generate plots
 ```
-idea.plot(scenario='normal')
-idea2.plot(scenario='normal')
+idea.plot()
+idea2.plot(scenario='best')
 ```
+
+Plotting all scenarios in one graph:
 ```
-idea.plots() # all scenarios in one graph
+idea.plots()
 ```
+
+Call .plot() or .plots() for several ideas in the same execution cell in IPython Notebook to combine them automagically.
 
 ## Combine ideas into lists
 ```
