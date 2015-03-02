@@ -26,6 +26,8 @@ profit 1000
 ''')
 ```
 
+Unfortunately, at the present time, we still have to prefix every line at least with ``: `` (colon and space) to get consistent results.
+
 ### With Custom Weights
 
 ```
