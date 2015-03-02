@@ -57,14 +57,14 @@ get: peeled apple 1
 add: mash 2, strawberry 1
 get: strawberry jam 0.2
 ''', iw={'apple': 1, 'strawberry': 0.1},\
-     ow={'peeled apple': 5, 'strawberry jam': 7}).to_df(dates=True)
+     ow={'peeled apple': 5, 'strawberry jam': 7}).to_df(dates=True, cumsum=True)
 ```
 
 ### Assembling lists of ideas
 
 Assembling lists of ideas requires writing them into variables first. For example.
 
-#### Breakkfast
+#### Breakfast
 
 Idea with a realistic **relative values** in some currency:
 
@@ -82,13 +82,19 @@ output3: cup of coffee 1\1.5
      ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5})
 ```
 
+It is possible also to define the start time for idea, example:
+```
+idea.start_date = datetime.datetime(2014,1,1,14,15)
+```
+The default is "now".
+
 #### Strawberry Jam
 Just another idea with default **relative values** of "1" per every item.
 ```{Python}
 idea2 = Idea(r'''
-入: 剥离皮肤 1, time 2, 苹果 1
+入: 剥离皮肤 1, time 2\4, 苹果 1
 出: 苹果去皮 1
-入: 捣碎 2, 草莓 1, time 1
+入: 捣碎 2, 草莓 1, time 1\3
 出: 草莓酱 0.2
 ''')
 ```
@@ -120,7 +126,7 @@ Call .plot() or .plots() for several ideas in the same execution cell in IPython
 ideas = IdeaList([idea, idea2])
 ```
 
-## Choose from ideas
+## Choose from ideas (not yet available!)
 ```{Python}
 ideas.choice(preferences={'sandwitch': 0.1, 'coffee': 0.9}, capital=100)
 ```
