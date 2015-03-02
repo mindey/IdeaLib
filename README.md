@@ -42,7 +42,7 @@ Example of idea with default **relative values** of "1" per every item.
 idea2 = Idea(r'''
 入: 剥离皮肤 1, time 2, 苹果 1
 出: 苹果去皮 1
-入: 捣碎 2, 草莓 1
+入: 捣碎 2, 草莓 1, time 1
 出: 草莓酱 0.2
 ''')
 ```
@@ -51,9 +51,10 @@ idea2 = Idea(r'''
 
 ```
 idea.to_df(scenario='normal')
-idea.to_df(scenario='best')
-idea.to_df(scenario='worst')
+idea.to_df(scenario='best', dates=True)
+idea.to_df(scenario='worst', dates=True)
 ```
+Recommend using ``dates=True`` whenever you have **time** in at least one of your inputs.
 
 ## Generate plots
 ```
@@ -68,6 +69,7 @@ idea.plots() # all scenarios in one graph
 ```
 ideas = IdeaList([idea, idea2])
 ```
+
 ## Choose from ideas
 ```
 ideas.choice(preferences={'sandwitch': 0.1, 'coffee': 0.9}, capital=100)
