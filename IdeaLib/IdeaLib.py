@@ -196,7 +196,7 @@ class Idea():
             df = self.df.reset_index()
             if 'time' not in df.columns:
                 df['time'] = 0
-            df['time'] = df['time'].convert_objects(convert_numeric=True).apply(lambda x: self.time_unit*int(x))
+            df['time'] = df['time'].convert_objects(convert_numeric=True).apply(lambda x: datetime.timedelta(seconds=self.time_unit.total_seconds()*float(x)))
             # Adding nanosecond, if the time is zero:
             df['time'] = df['time'].apply(lambda x: datetime.timedelta(milliseconds=0.001) if x == 0 else x)
             df['date'] = self.start_time + df['time'].cumsum()
