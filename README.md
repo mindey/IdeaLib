@@ -20,10 +20,10 @@ Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://git
 ### Minimal
 ```
 from IdeaLib import Idea, IdeaList
-i = Idea(r'''
+Idea(r'''
 : do 100
 : profit 1000
-''')
+''').to_df()
 ```
 
 The ``: `` (colon and whitespace) is currently a separator for label of input/output.
