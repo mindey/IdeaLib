@@ -85,6 +85,7 @@ o3: cup of coffee 1\1.5
 ```
 
 All ODD numbered rows are considered to be INPUTS.
+
 All EVEN numbered rows are considered to be OUTPUTS.
 
 Prefix of i1:, o2:,.. is any string without a space. In parsing, all things before the first space are removed.
