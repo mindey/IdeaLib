@@ -11,6 +11,8 @@ This is basically an idea of a library to leverage our decisions on the database
 ```
 pip install IdeaLib
 ```
+or simply ``wget https://raw.githubusercontent.com/Mindey/IdeaLib/master/IdeaLib/IdeaLib.py``
+
 Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://github.com/numpy/numpy), not included in requirements.
 
 ## Create Ideas
@@ -25,8 +27,8 @@ profit 1000
 ```
 
 ### With Custom Weights
-```
 
+```
 idea = Idea(r'''
 i1: time 0.003\0.004, loaf of black bread 1, butter grams 15, tomato 0.5, salt grams 0.4
 o1: sandwitch 1
