@@ -40,7 +40,7 @@ label4: profit 10000\20000, waste 100\50
 ''').to_df(dates=True) #.plots()
 ```
 
-Use ``to_df()`` or ``.to_df(dates=True)``, or calling ``.plot()`` or ``.plots()`` this way rather than saving Idea instance it into a variable in order to get a preview immediately as you compose the content of idea. Recommend using IPython Notebook for that.
+Use ``to_df()`` or ``.to_df(dates=True, scenario='worst')`` (could be 'best', 'normal'), or calling ``.plot('best')`` or ``.plots()`` this way rather than saving Idea instance it into a variable in order to get a preview immediately as you compose the content of idea. Recommend using IPython Notebook for that.
 
 ### With Custom Weights
 
