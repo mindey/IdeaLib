@@ -28,6 +28,8 @@ Idea(r'''
 
 The ``: `` (colon and whitespace) is currently a separator for label of input/output.
 
+This way, adding ``.to_df()`` or ``.to_df(dates=True)``, or calling ``.plot()`` or ``.plots()`` immediately after an idea is a way to immediately preview your result. Use this way rather than saving Idea instance it into a variable in order to get a preview immediately as you compose the content of idea. Recommend using IPython Notebook for that.
+
 ### With Custom Weights
 
 **General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
