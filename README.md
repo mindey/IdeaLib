@@ -37,7 +37,7 @@ output3: cup of coffee 1\1.5
 ''', iw=1, ow=1)
 ```
 
-**General rule:** _odd_ rows are _inputs_. _even_ rows are _outputs. Prefixes are custom.
+**General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
 
 Example of defining **relative values** in some currency:
 ```
