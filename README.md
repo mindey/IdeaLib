@@ -4,6 +4,8 @@ I [need](http://www.halfbakery.com/idea/How_20to_20Analyze_20Ideas_20Quantitativ
 
 The example below may be easier to understand, if you look at [IDL description](http://mindey.com/IdeaLib.html) my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
 
+This is basically an idea of a library to leverage our decisions on the databases of ideas, and a language to create such databases by describing existing ideas.
+
 # Usage
 
 ```
@@ -25,21 +27,6 @@ o3: cup of coffee 1\1.5
 ''', iw=1, ow=1)
 ```
 
-## Generate scenarios:
-
-```
-i.to_df(scenario='normal')
-i.to_df(scenario='best')
-i.to_df(scenario='worst')
-```
-
-## Generate plots:
-```
-i.plot(scenario='normal')
-i.plots() # generates all scenarios in one graph
-```
-
-## Combine ideas into lists, and choose from idea database:
 ```
 i2 = Idea(r'''
 入: 剥离皮肤 1, time 2, 苹果 1
@@ -49,11 +36,29 @@ i2 = Idea(r'''
 ''')
 ```
 
+## Generate scenarios
+
 ```
-l = IdeaList([i, i2])
-l.choice(preferences={'sandwitch': 0.1, 'coffee': 0.9})
-# will automatically lookup best ideas for your goal preferences.
+i.to_df(scenario='normal')
+i.to_df(scenario='best')
+i.to_df(scenario='worst')
 ```
+
+## Generate plots
+```
+i.plot(scenario='normal')
+i.plots() # generates all scenarios in one graph
+```
+
+## Combine ideas into lists
+```
+ideas = IdeaList([i, i2])
+```
+## Choose from ideas
+```
+ideas.choice(preferences={'sandwitch': 0.1, 'coffee': 0.9}, capital=100)
+```
+(produce weighted lists of which ideas to invest to, in what proportions)
 
 # Syntax
 ```
@@ -80,7 +85,7 @@ iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
 ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5}
 ```
 
-So, here you would not necessarily need to type in ``'scrambling actions': 0```, because it (and all other defaults) would be reset to "0", if at least one value in ``iw`` dictionary is provided.
+So, here you would not necessarily need to type in ``'scrambling actions': 0``, because it (and all other defaults) would be reset to "0", if at least one value in ``iw`` dictionary is provided.
 
 
 
