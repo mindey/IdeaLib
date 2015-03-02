@@ -4,6 +4,88 @@ I [need](http://www.halfbakery.com/idea/How_20to_20Analyze_20Ideas_20Quantitativ
 
 The example below may be easier to understand, if you look at [IDL description](http://mindey.com/IdeaLib.html) my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
 
+# Usage
+
+```
+pip install IdeaLib
+```
+Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://github.com/numpy/numpy), not included in requirements.
+
+## Create Ideas
+```
+from IdeaLib import Idea, IdeaList
+
+i = Idea(r'''
+i1: time 0.003\0.004, loaf of black bread 1, butter grams 15, tomato 0.5, salt grams 0.4
+o1: sandwitch 1
+i2: eggs 2\5, scrambling actions 50\100, time 0.003\0.005
+o2: scrambled egg servings 1
+i3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
+o3: cup of coffee 1\1.5
+''', iw=1, ow=1)
+```
+
+## Generate scenarios:
+
+```
+i.to_df(scenario='normal')
+i.to_df(scenario='best')
+i.to_df(scenario='worst')
+```
+
+## Generate plots:
+```
+i.plot(scenario='normal')
+i.plots() # generates all scenarios in one graph
+```
+
+## Combine ideas into lists, and choose from idea database:
+```
+i2 = Idea(r'''
+入: 剥离皮肤 1, time 2, 苹果 1
+出: 苹果去皮 1
+入: 捣碎 2, 草莓 1
+出: 草莓酱 0.2
+''')
+```
+
+```
+l = IdeaList([i, i2])
+l.choice(preferences={'sandwitch': 0.1, 'coffee': 0.9})
+# will automatically lookup best ideas for your goal preferences.
+```
+
+# Syntax
+```
+i1: time 0.003\0.004, loaf of black bread 1, butter grams 15, tomato 0.5, salt grams 0.4
+o1: sandwitch 1
+i2: eggs 2\5, scrambling actions 50\100, time 0.003\0.005
+o2: scrambled egg servings 1
+i3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
+o3: cup of coffee 1\1.5
+```
+
+Backslash signs indicate different scenarios. E.g., in best case scenario, we expect spending 0.003 day for making sandwitch, in worst -- 0.004 day.
+
+The default for **time** is "days", because it is a convenient timescale for both long-term project (e.g., 1825 days business plan), and short term-projects (0.04 days lecture), and it is the only reserved word, that is occasionally treated differently, for example, is used in ``.to_df()`` method to compute dates, however, you can change it by updating ``i.time_unit`` attribute with a ``datetime.timedelta()`` object.
+
+The default assumption is that the project starts now, but you can change that by updating ``i.start_time`` attribute with a ``datetime.datetime()`` object.
+
+The default value weights for the value of i/o (input/output) are considered to be equal to "1", and ``iw, ow`` params are optional. You can redefine them by providing the weighting vectors with ``iw`` and ``ow`` parameters, in the Idea constructor. Defining at least one of the values resets the defaults of others to "0". for example: 
+
+```
+iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
+    'tomato': 0.2, 'salt grams': 0.001, 'eggs': 0.2, 'scrambling actions': 0, \
+    'coffee teaspoon': 0.002, 'liters of water': 0.001}
+ow={'scrambled egg servings': 5, 'cup of coffee': 7, 'sandwitch': 5}
+```
+
+So, here you would not necessarily need to type in ``'scrambling actions': 0```, because it (and all other defaults) would be reset to "0", if at least one value in ``iw`` dictionary is provided.
+
+
+
+
+
 # Done:
 
 * Custom scenarios
