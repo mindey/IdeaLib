@@ -2,9 +2,9 @@
 
 I [need](http://www.halfbakery.com/idea/How_20to_20Analyze_20Ideas_20Quantitatively_3f) some way to estimate the i/o of ideas. I'll describe it later. Didn't sleep tonight. :)
 
-The example below may be easier to understand, if you look at [IDL description](http://mindey.com/IdeaLib.html) my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
-
 This is basically an idea of a library to leverage our decisions on the databases of ideas, and a language to create such databases by describing existing ideas.
+
+The example below may be easier to understand, if you look at [IDL description](http://mindey.com/IdeaLib.html) my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
 
 # Usage
 
