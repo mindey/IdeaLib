@@ -105,11 +105,7 @@ i3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
 o3: cup of coffee 1\1.5
 ```
 
-All ODD numbered rows are considered to be INPUTS.
-
-All EVEN numbered rows are considered to be OUTPUTS.
-
-Prefix of i1:, o2:,.. is any string without a space. In parsing, all things before the first space are removed.
+Name precedes value. Name-value pairs are separated by commas.
 
 Backslash signs indicate different scenarios. E.g., in best case scenario, we expect spending 0.003 day for making sandwitch, in worst -- 0.004 day.
 
