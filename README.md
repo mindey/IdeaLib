@@ -21,14 +21,16 @@ Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://git
 ```
 from IdeaLib import Idea, IdeaList
 i = Idea(r'''
-do 100
-profit 1000
+: do 100
+: profit 1000
 ''')
 ```
 
-Unfortunately, at the present time, we still have to prefix every line at least with ``: `` (colon and space) to get consistent results.
+The ``: `` (colon and whitespace) is currently a separator for label of input/output.
 
 ### With Custom Weights
+
+**General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
 
 ```
 idea = Idea(r'''
@@ -40,8 +42,6 @@ input3: coffee teaspoon 1\2, liters of water 0.2\0.3, time 0.003\0.005
 output3: cup of coffee 1\1.5
 ''', iw=1, ow=1)
 ```
-
-**General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
 
 Example of defining **relative values** in some currency:
 ```
@@ -131,33 +131,6 @@ So, here you would not necessarily need to type in ``'scrambling actions': 0``, 
 
 
 
-
-# Done:
-
-* Custom scenarios
-* Mean/median scenarios
-* Best case scenarios
-* Worst case scenarios
-* Alignment by time
-* Aligment by money and custom dimensions
-* Weighting quantities by constant value
-
-# ToDo:
-
-* Write examples of the above
-* Weighting Quantites by Changing Market Value
-* Make a pip install
-* Clean up and generalize code to the degree that it is easily usable inside any app. (Primary focus: powerful expressive and easy IDL, a protocol, could be used by humans and computers.)
-* Think of a more elegant way to resample generated dataframe by amounts of time specified.
-* Possibility to pass probabilities along with the list of values, e.g., 50:.12\200:.48\400:.4
-* Consider the possibility to branch into non-linear plan. (ie., STRIPS)
-* Consider the possibility to interpolate multinomial distribution provided.
-* Possibility to provide two value:probability pairs as probabilities as analytical functions, e.g., v:p(v), where v is value, and p is probability function, e.g., v1:p1(sqrt(v1))\v2:p2(v2)\v3:p3(v3).
-* Make rational cumsum(), e.g., ``Idea.to_df(icumsum=True, ocumsum=True)``. By default we want to assume these to be True, because it is often so that we just think of the last change, yet we want to approximate result.
-* There should be a way to add exception to cumsum in language from cumsuming, or decay time, or half-life or just any function defining the decay over time or over iterations or conditions satisfied for decay to by specific margin to occur. The distribution of margins and condition sets associated with margin, is the subject of decay-condition distribution.
-* Once we have all ideas in a db, we could create the IdeaList.choice() method. This choice(deliverables) method would take ideas and, find ideas best suited to bring deliverables with smallest input/shortest time (imagine having the database of all ideas in an idea bank, and defining your goal criteria, by deliverables, to choose ideas to invest). Sure, we would want to have IdeaList.investables and IdeaList.deliverables attributes.
-* Refactor scenario generation, or make a separate scenario generation class.
-* Describe usage in documentation and good examples, may rename some variables.
 
 # Idea Definition Language
 
@@ -284,6 +257,30 @@ Soon, it will be possible to define the values for the items at each step. We ma
 
 More info: [http://mindey.com/IdeaLib.html](http://mindey.com/IdeaLib.html)
 
+# Done:
 
+* Custom scenarios
+* Mean/median scenarios
+* Best case scenarios
+* Worst case scenarios
+* Alignment by time
+* Aligment by money and custom dimensions
+* Weighting quantities by constant value
 
+# ToDo:
+
+* Write examples of the above
+* Weighting Quantites by Changing Market Value
+* Make a pip install
+* Clean up and generalize code to the degree that it is easily usable inside any app. (Primary focus: powerful expressive and easy IDL, a protocol, could be used by humans and computers.)
+* Think of a more elegant way to resample generated dataframe by amounts of time specified.
+* Possibility to pass probabilities along with the list of values, e.g., 50:.12\200:.48\400:.4
+* Consider the possibility to branch into non-linear plan. (ie., STRIPS)
+* Consider the possibility to interpolate multinomial distribution provided.
+* Possibility to provide two value:probability pairs as probabilities as analytical functions, e.g., v:p(v), where v is value, and p is probability function, e.g., v1:p1(sqrt(v1))\v2:p2(v2)\v3:p3(v3).
+* Make rational cumsum(), e.g., ``Idea.to_df(icumsum=True, ocumsum=True)``. By default we want to assume these to be True, because it is often so that we just think of the last change, yet we want to approximate result.
+* There should be a way to add exception to cumsum in language from cumsuming, or decay time, or half-life or just any function defining the decay over time or over iterations or conditions satisfied for decay to by specific margin to occur. The distribution of margins and condition sets associated with margin, is the subject of decay-condition distribution.
+* Once we have all ideas in a db, we could create the IdeaList.choice() method. This choice(deliverables) method would take ideas and, find ideas best suited to bring deliverables with smallest input/shortest time (imagine having the database of all ideas in an idea bank, and defining your goal criteria, by deliverables, to choose ideas to invest). Sure, we would want to have IdeaList.investables and IdeaList.deliverables attributes.
+* Refactor scenario generation, or make a separate scenario generation class.
+* Describe usage in documentation and good examples, may rename some variables.
 
