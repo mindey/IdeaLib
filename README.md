@@ -30,6 +30,16 @@ The ``: `` (colon and whitespace) is currently a separator for label of input/ou
 
 This way, adding ``.to_df()`` or ``.to_df(dates=True)``, or calling ``.plot()`` or ``.plots()`` immediately after an idea is a way to immediately preview your result. Use this way rather than saving Idea instance it into a variable in order to get a preview immediately as you compose the content of idea. Recommend using IPython Notebook for that.
 
+### Beyond Minimal
+```
+Idea(r'''
+label1: do1 100\200, time 10\15
+label2: profit 1000
+label3: do2 10\15, time 15\20
+label4: profit 10000\20000, waste 100\50
+''').to_df(dates=True) #.plots()
+```
+
 ### With Custom Weights
 
 **General rule:** _odd_ rows are _inputs_, _even_ rows are _outputs. Prefixes are optional.
