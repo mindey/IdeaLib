@@ -19,7 +19,7 @@ Dependencies: [Pandas](https://github.com/pydata/pandas) and [Numpy](https://git
 ```
 from IdeaLib import Idea, IdeaList
 i = Idea(r'''
-do1 100
+do 100
 profit 1000
 ''')
 ```
