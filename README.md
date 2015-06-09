@@ -6,8 +6,8 @@ This is basically an idea of a library to leverage our decisions on the database
 
 The example below may be easier to understand, if you look at [IDL description](http://mindey.com/IdeaLib.html) my [blog post](http://blog.mindey.com/2014/12/07/comparing-two-ideas-simple-modelling-of-growth/).
 
-Introductory video: [http://youtu.be/HIjAkA05g3U](http://youtu.be/HIjAkA05g3U).
-Introductory IPython Notebook: [cloud.sagemath.com/projects/...](https://cloud.sagemath.com/projects/f4cf10f5-140c-45e7-bf19-f3534c8bf022/files/ValueOfIdeas/introducing_idealib.ipynb)
+* Introductory video: [http://youtu.be/HIjAkA05g3U](http://youtu.be/HIjAkA05g3U).
+* Introductory IPython Notebook: [cloud.sagemath.com/projects/...](https://cloud.sagemath.com/projects/f4cf10f5-140c-45e7-bf19-f3534c8bf022/files/ValueOfIdeas/introducing_idealib.ipynb)
 # Usage
 
 ```
