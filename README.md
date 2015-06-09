@@ -8,6 +8,7 @@ The example below may be easier to understand, if you look at [IDL description](
 
 * Introductory video: [http://youtu.be/HIjAkA05g3U](http://youtu.be/HIjAkA05g3U).
 * Introductory IPython Notebook: [cloud.sagemath.com/projects/...](https://cloud.sagemath.com/projects/f4cf10f5-140c-45e7-bf19-f3534c8bf022/files/ValueOfIdeas/introducing_idealib.ipynb)
+
 # Usage
 
 ```
