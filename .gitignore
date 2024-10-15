@@ -13,3 +13,4 @@ IdeaLib.egg-info/*
 *.pyo
 *.swp
 *.py~
+.venv

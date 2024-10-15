@@ -8,4 +8,7 @@ setup(name='IdeaLib',
       author_email='mindey@gmail.com',
       license='MI',
       packages=['IdeaLib'],
+      install_requires=[
+          'pandas',
+      ],
       zip_safe=False)

@@ -1,4 +1,5 @@
 # IdeaLib
+Investment from first principles: [ Inputs, Outputs ] X Values
 
 I [need](http://www.halfbakery.com/idea/How_20to_20Analyze_20Ideas_20Quantitatively_3f) some way to estimate the i/o of ideas. I'll describe it later. Didn't sleep tonight. :)
 
@@ -32,7 +33,7 @@ Idea(r'''
 
 The ``: `` (colon and whitespace) is currently a separator for label of input/output.
 
-This way, adding ``.to_df()`` immediately after an idea is a way to immediately preview your result. 
+This way, adding ``.to_df()`` immediately after an idea is a way to immediately preview your result.
 
 ### Beyond Minimal
 
@@ -158,7 +159,7 @@ The default for **time** is "days", because it is a convenient timescale for bot
 
 The default assumption is that the project starts now, but you can change that by updating ``i.start_time`` attribute with a ``datetime.datetime()`` object.
 
-The default value weights for the value of i/o (input/output) are considered to be equal to "1", and ``iw, ow`` params are optional. You can redefine them by providing the weighting vectors with ``iw`` and ``ow`` parameters, in the Idea constructor. Defining at least one of the values resets the defaults of others to "0". for example: 
+The default value weights for the value of i/o (input/output) are considered to be equal to "1", and ``iw, ow`` params are optional. You can redefine them by providing the weighting vectors with ``iw`` and ``ow`` parameters, in the Idea constructor. Defining at least one of the values resets the defaults of others to "0". for example:
 
 ```{Python}
 iw={'time': 10, 'loaf of black bread': 0.1, 'butter grams': 0.01, \
@@ -176,7 +177,7 @@ So, here you would not necessarily need to type in ``'scrambling actions': 0``, 
 Ideas are assumed to be objects that contain an ordered map between action and their expected non-cumulative results.
 
 ```
-f: 
+f:
 do_x1 -> get_y1
 do_x2 -> get_y2
 ...
@@ -185,7 +186,7 @@ do_x2 -> get_y2
 Internally, we define this ordered map as list of tuples:
 
 ```{Python}
-Idea([(do, get), 
+Idea([(do, get),
       (do, get),
       ...])
 ```
@@ -209,7 +210,7 @@ get: strawberry jam 0.2
 ''')
 ```
 
-In fact, we can use the words of any human language I/O, like the below. 
+In fact, we can use the words of any human language I/O, like the below.
 
 ```{Python}
 i = Idea(r'''
@@ -236,7 +237,8 @@ For example, the expression { '草莓酱': [0.2, 0.3, 0.5] } will mean that
  * 1-th scenario is we get 0.3 strawberry jam
  * 2-th scenario is we get 0.5 strawberry jam
 
-In the IDL, we use backslash to generate such a JSON internally: 
+In the IDL, we use backslash to generate such a JSON internally:
+:q
 
 ```
 入: 剥离皮肤 1, time 2\5, 苹果 1
