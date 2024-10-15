@@ -1,5 +1,12 @@
 # IdeaLib
-Investment from first principles: [ Inputs, Outputs ] X Values
+IdeaLib is built on the first principles of investments, that:
+
+1) You put assets into a plan.
+2) You get assets out of it.
+3) Assets have valuation.
+
+ [- Inputs + Outputs ] x Values
+
 
 I [need](http://www.halfbakery.com/idea/How_20to_20Analyze_20Ideas_20Quantitatively_3f) some way to estimate the i/o of ideas. I'll describe it later. Didn't sleep tonight. :)
 
@@ -322,4 +329,3 @@ More info: [http://mindey.com/IdeaLib.html](http://mindey.com/IdeaLib.html)
 * Once we have all ideas in a db, we could create the IdeaList.choice() method. This choice(deliverables) method would take ideas and, find ideas best suited to bring deliverables with smallest input/shortest time (imagine having the database of all ideas in an idea bank, and defining your goal criteria, by deliverables, to choose ideas to invest). Sure, we would want to have IdeaList.investables and IdeaList.deliverables attributes.
 * Refactor scenario generation, or make a separate scenario generation class.
 * Describe usage in documentation and good examples, may rename some variables.
-

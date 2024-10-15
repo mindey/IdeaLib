@@ -4,6 +4,32 @@ import itertools
 import datetime
 import copy
 
+
+class Scenario:
+    def to_list_if_needed(val):
+        return [val] if type(val) != list else val
+
+    def max_or_median(val_list):
+        if isinstance(val_list[0], (str, int, float)):
+            return max([float(v) for v in val_list])
+        else:
+            return val_list[len(val_list) // 2]  # Use median if not number
+
+    def mean_or_median(val_list):
+        if isinstance(val_list[0], (str, int, float)):
+            return sum([float(v) for v in val_list]) / len(val_list)
+        else:
+            return val_list[len(val_list) // 2]  # Use median if not number
+
+    def min_or_median(val_list):
+        if isinstance(val_list[0], (str, int, float)):
+            return min([float(v) for v in val_list])
+        else:
+            return val_list[len(val_list) // 2]  # Use median if not number
+
+    def nth_value(val_list, n):
+        return val_list[n] if n < len(val_list) else val_list[-1]
+
 class Idea():
     def __init__(self, plan={}, iw=1, ow=1):
         self.time_unit = datetime.timedelta(days=1)
@@ -15,6 +41,7 @@ class Idea():
             self.from_idl(plan)
         else:
             self.plan = plan
+
     def from_idl(self, text):
         ''' Converts a multiline string to self.plan list of tuples of dicts.
             vline: the part of line after @ mark sign
@@ -40,79 +67,62 @@ class Idea():
                 result.append((split_dict_values(line_to_dict(domain)),split_dict_values(line_to_dict(codomain))))
         self.plan = result
         # self.iweights, self.oweights -- define here later from the text.
+
     def __str__(self):
         return str(self.plan)
+
     def __repr__(self):
         self.view = ''
         for i, p in enumerate(self.plan):
-            if i == 0: self.view += '' + str(p[0]) + '\n:  ' + str(p[1]) +'\n';
-            if i > 0: self.view += '' + str(p[0]) + '\n-> ' + str(p[1]) +'\n';
+            # if i == 0: self.view += '' + str(p[0]) + '\n:  ' + str(p[1]) +'\n';
+            if i >= 0: self.view += '' + str(p[0]) + '\n-> ' + str(p[1]) +'\n';
         return self.view
-    def _plan_values_to_lists(self):
+
+    def _apply_plan_transform(self, domain_op, codomain_op, need_copy=True):
+        """
+        Abstracts the operations of applying a transformation on self.plan,
+        with configurable behavior for domain (j == 0) and codomain (j == 1).
+
+        Args:
+        - domain_op: function to apply to the domain (j == 0)
+        - codomain_op: function to apply to the codomain (j == 1)
+        """
+        if need_copy:
+            p = copy.deepcopy(self.plan)
+
+        for i, x in enumerate(p):
+            for j, y in enumerate(p[i]):
+                for k, z in enumerate(p[i][j]):
+                    # Apply domain operation (j == 0) and codomain operation (j == 1)
+                    if j == 0:
+                        p[i][j][z] = domain_op(self.plan[i][j][z])
+                    elif j == 1:
+                        p[i][j][z] = codomain_op(self.plan[i][j][z])
+
+        if need_copy:
+            self.p = p
+            self.scenario = p
+
+    def _plan_values_to_lists(self, need_copy=False):
         ''' Converts Plan Dictionary Values to Lists '''
-        for i, x in enumerate(self.plan):
-            for j, y in enumerate(self.plan[i]):
-                for k, z in enumerate(self.plan[i][j]):
-                    self.plan[i][j][z] = [self.plan[i][j][z]] if type(self.plan[i][j][z]) != list else self.plan[i][j][z]
+        self._apply_plan_transform(Scenario.to_list_if_needed, Scenario.to_list_if_needed)
+
     def scenario_mean_values(self):
         ''' Takes the means for value lists, to be used for mean scenario. '''
-        p = copy.deepcopy(self.plan)
-        for i,x in enumerate(p):
-            for j, y in enumerate(p[i]):
-                for k, z in enumerate(p[i][j]):
-                    p[i][j][z] = sum([float(val) for val in p[i][j][z]])/len(p[i][j][z]) \
-                    if type(self.plan[i][j][z][0]) in [str, int, float] \
-                    else p[i][j][z][len(p[i][j][z])/2]
-        self.p = p
-        self.scenario = p
+        self._apply_plan_transform(Scenario.mean_or_median, Scenario.mean_or_median)
+
     def scenario_max_in_min_out(self):
-        ''' This takes max values for the domain, and min values for codomain.'''
-        p = copy.deepcopy(self.plan)
-        for i,x in enumerate(p):
-            for j, y in enumerate(p[i]):
-                for k, z in enumerate(p[i][j]):
-                    if j == 0: # max in.  # it seems max operator works .. for strings too
-                        p[i][j][z] = max([float(val) for val in p[i][j][z]]) \
-                        if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else float(p[i][j][z][len(p[i][j][z])/2])
-                    if j == 1: # min out
-                        p[i][j][z] = min([float(val) for val in p[i][j][z]]) \
-                        if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else float(p[i][j][z][len(p[i][j][z])/2])
-        self.p = p
-        self.scenario = p
+        ''' This takes max values for the domain, and min values for codomain. '''
+        self._apply_plan_transform(Scenario.max_or_median, Scenario.min_or_median)
+
     def scenario_min_in_max_out(self):
-        ''' This takes max values for the domain, and min values for codomain.'''
-        p = copy.deepcopy(self.plan)
-        for i,x in enumerate(p):
-            for j, y in enumerate(p[i]):
-                for k, z in enumerate(p[i][j]):
-                    if j == 0: # min in
-                        p[i][j][z] = min([float(val) for val in p[i][j][z]]) \
-                        if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else float(p[i][j][z][len(p[i][j][z])/2])
-                    if j == 1: # max out
-                        p[i][j][z] = max([float(val) for val in p[i][j][z]]) \
-                        if type(self.plan[i][j][z][0]) in [str, int, float] \
-                        else float(p[i][j][z][len(p[i][j][z])/2])
-        self.p = p
-        self.scenario = p
-    def scenario_n(self,n=0):
-        ''' This takes mean values for the domain, and nth values for codomain.'''
-        p = copy.deepcopy(self.plan)
-        for i,x in enumerate(p):
-            for j, y in enumerate(p[i]):
-                for k, z in enumerate(p[i][j]):
-                    if j == 0: # domain
-                        p[i][j][z] = sum(p[i][j][z])/len(p[i][j][z]) \
-                        if type(self.plan[i][j][z][0]) in [int, float] \
-                        else p[i][j][z][len(p[i][j][z])/2]
-                    if j == 1: # codomain
-                        p[i][j][z] = p[i][j][z][n] \
-                        if len(self.plan[i][j][z])+1 >= n \
-                        else p[i][j][z][min(n,len(p[i][j][z]-1))]
-        self.p = p
-        self.scenario = p
+        ''' This takes min values for the domain, and max values for codomain. '''
+        self._apply_plan_transform(Scenario.min_or_median, Scenario.max_or_median)
+
+    def scenario_n(self, n=0):
+        ''' This takes mean values for the domain, and nth values for codomain. '''
+        self._apply_plan_transform(self, Scenario.mean_or_median, Scenario.nth_value)
+
     def _plan_add_dummy_index_keys(self):
         ''' Unifies the domain index. '''
         types, index, values = zip(*[[t[0].keys(),tuple(t[0].values()), t[1]] for l,t in enumerate(self.plan)])
@@ -120,6 +130,7 @@ class Idea():
         for i, x in enumerate(self.plan):
             absent_keys = types - set(self.plan[i][0].keys())
             self.plan[i] = (dict(self.plan[i][0], **dict(zip(absent_keys, [[0]]*(len(absent_keys))))), self.plan[i][1])
+
     def to_df(self, scenario='normal', dates=False, value=False, iweights=False, oweights=False, resample=False, fill=False, silent=False, convert='numeric', cumsum=False):
         ''' Converts a scenario to DataFrame. '''
         self.u = self._plan_values_to_lists()
@@ -230,6 +241,7 @@ class Idea():
             self.df['value_sum'] = self.df['value'].cumsum()
         if not silent:
             return self.df
+
     def plot(self, scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, cumsum=True, legend=''):
         if not legend:
             legend = scenario+' scenario'
@@ -237,31 +249,38 @@ class Idea():
             self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': legend})[legend].cumsum().plot(legend=True)
         else:
             self.to_df(scenario=scenario, dates=dates, value=value, iweights=iweights, oweights=oweights, resample=resample, fill=fill).rename(columns={'value': legend})[legend].plot(legend=True)
+
     def plots(self, legend=''):
         self.plot(scenario="worst", legend=(legend+" (worst scenario)").strip())
         self.plot(scenario="normal", legend=(legend+" (normal scenario)").strip())
         self.plot(scenario="best", legend=(legend+" (best scenario)").strip())
 
 class IdeaList(list):
+
     def _compute_data_frames(self):
         for i in range(list.__len__(self)):
             list.__getitem__(self, i).to_df(scenario='normal', dates=True, value=True, iweights=False, oweights=False, resample=True, fill=True, silent=True)
+
     def _compute_common_index(self):
         if list.__len__(self) <= 0:
             return False
         self.index = list.__getitem__(self,0).df.index
         for i in range(1,list.__len__(self)):
             self.index = self.index.union(list.__getitem__(self, i).df.index)
+
     def _reindex_data_frames(self):
         for i in range(list.__len__(self)):
             list.__getitem__(self, i).df = list.__getitem__(self, i).df.reindex(self.index)
+
     def align(self):
         self._compute_data_frames()
         self._compute_common_index()
         self._reindex_data_frames()
+
     def merge(self, variable='value'):
         self.df = pd.concat([list.__getitem__(self, i).df['value'] for i in range(list.__len__(self))],axis=1)
         self.df.columns = range(1,len(self.df.columns)+1) # just to correspond to idea natural number
+
     def plot(self, kind='default'):
         self.align()
         if kind == 'default':
@@ -270,6 +289,7 @@ class IdeaList(list):
         if kind == 'value': # (currently buggy)
             self.merge()
             self.df.bfill().plot(linewidth=2)
+
     def plots(self):
         for i in range(list.__len__(self)):
             list.__getitem__(self, i).plots(legend='Idea %s'%i)
