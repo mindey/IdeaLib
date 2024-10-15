@@ -10,5 +10,6 @@ setup(name='IdeaLib',
       packages=['IdeaLib'],
       install_requires=[
           'pandas',
+          'matplotlib'
       ],
       zip_safe=False)

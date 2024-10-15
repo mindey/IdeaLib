@@ -30,6 +30,7 @@ class Scenario:
     def nth_value(val_list, n):
         return val_list[n] if n < len(val_list) else val_list[-1]
 
+
 class Idea():
     def __init__(self, plan={}, iw=1, ow=1):
         self.time_unit = datetime.timedelta(days=1)
@@ -43,30 +44,43 @@ class Idea():
             self.plan = plan
 
     def from_idl(self, text):
-        ''' Converts a multiline string to self.plan list of tuples of dicts.
-            vline: the part of line after @ mark sign
+        '''Converts a multiline string to self.plan list of tuples of dicts.
+        vline: the part of line after @ mark sign
         '''
+        def line_to_dict(line_segment):
+            # Converts a line segment into a dictionary
+            return {
+                ' '.join(attr.strip().split(' ')[:-1]): attr.strip().split(' ')[-1]
+                for attr in line_segment.split(',')
+            }
+
+        def split_dict_values(dictionary):
+            # Splits values in the dictionary based on the backslash
+            return { key: value.split('\\') for key, value in dictionary.items() }
+
         result = []
-        for i,line in enumerate(text.rstrip().lstrip().split('\n')):
+        lines = [line.strip() for line in text.strip().split('\n')]
+
+        for i in range(len(lines)):
+            line = lines[i]
             if '@' in line:
-                # for processing value definitions
-                line, vline = line.strip().split('@')
-                line = line.strip(); vline = vline.strip()
-            first_whitespace = line.find(' ')
-            #line_to_dict =  lambda x: dict([attribute.strip().split(' ') for attribute in x.split(',')])
-            line_to_dict =  lambda x: dict([[' '.join(attribute.strip().split(' ')[:-1]), attribute.strip().split(' ')[-1]] for attribute in x.split(',')])
-            split_dict_values = lambda d: dict([(v, d[v].split('\\')) for k,v in enumerate(d)])
+                line, _ = line.strip().split('@')
+
+            first_whitespace_index = line.find(' ')
+            domain_or_codomain = line[first_whitespace_index:].strip()
+
+            # Ensure there is a default value of '1' if no space is found
+            if ' ' not in domain_or_codomain:
+                domain_or_codomain += ' 1'
+
             if i % 2 == 0:
-                domain = line[first_whitespace:].strip()
-                if ' ' not in domain: # just so that line_to_dict would work.
-                    domain += ' 1'
-            elif i % 2 == 1:
-                codomain = line[first_whitespace:].strip()
-                if ' ' not in codomain: # just so that line_to_dict would work.
-                    codomain += ' 1'
-                result.append((split_dict_values(line_to_dict(domain)),split_dict_values(line_to_dict(codomain))))
+                domain = domain_or_codomain
+            else:
+                codomain = domain_or_codomain
+                result.append((split_dict_values(line_to_dict(domain)), split_dict_values(line_to_dict(codomain))))
+
         self.plan = result
-        # self.iweights, self.oweights -- define here later from the text.
+
 
     def __str__(self):
         return str(self.plan)
@@ -79,14 +93,6 @@ class Idea():
         return self.view
 
     def _apply_plan_transform(self, domain_op, codomain_op, need_copy=True):
-        """
-        Abstracts the operations of applying a transformation on self.plan,
-        with configurable behavior for domain (j == 0) and codomain (j == 1).
-
-        Args:
-        - domain_op: function to apply to the domain (j == 0)
-        - codomain_op: function to apply to the codomain (j == 1)
-        """
         if need_copy:
             p = copy.deepcopy(self.plan)
 
@@ -155,54 +161,46 @@ class Idea():
         # Will need to make so that value = ovalue - ivalue
         # Basically:                value = self.d2*ovalue - self.d1*ivalue
         # input value
-        if iweights:
-            self.iweights = iweights
-        if type(self.iweights)==int:
-            self.iweights = len(self.d1.columns)*[self.iweights]
-        if type(self.iweights)==bool:
-            self.iweights = len(self.d1.columns)*[1]
-        if type(self.iweights)==dict:
-            self.iweights = [self.iweights[key] if key in self.iweights.keys() else 0 for key in self.df.index.names]
-        if type(self.iweights)==list:
-            if len(self.iweights) < len(self.d1.columns):
-                self.iweights += [0]*(len(self.d1.columns)-len(self.iweights))
-            else:
-                self.iweights = self.iweights[0:len(self.d1.columns)]
-        if type(self.iweights)==dict:
-            pass
-        self.d1  = pd.DataFrame(self.d1.values, index=self.df.index, columns=self.d1.columns)
-        self.d1['ivalue'] = (self.d1*self.iweights).sum(axis=1)
-        # output value
-        if oweights:
-            self.oweights = oweights
-        if type(self.oweights)==int:
-            self.oweights = len(self.d2.columns)*[self.oweights]
-        if type(self.oweights)==bool:
-            self.oweights = len(self.d2.columns)*[1]
-        if type(self.oweights)==dict:
-            self.oweights = [self.oweights[key] if key in self.oweights.keys() else 0 for key in self.df.columns]
-        if type(self.oweights)==list:
-            if len(self.oweights) < len(self.df.columns):
-                self.oweights += [0]*(len(self.df.columns)-len(self.oweights))
-            else:
-                self.oweights = self.oweights[0:len(self.df.columns)]
-        if type(self.oweights)==dict:
-            pass
-        self.d2  = pd.DataFrame(self.d2.values, index=self.df.index, columns=self.d2.columns)
-        self.d2['ovalue'] = (self.d2*self.oweights).sum(axis=1)
+        def process_weights(weights, reference_columns, reference_index_names):
+            # Handle the different types of weights
+            if type(weights) == int:
+                return len(reference_columns) * [weights]
+            elif type(weights) == bool:
+                return len(reference_columns) * [1]
+            elif type(weights) == dict:
+                return [weights[key] if key in weights else 0 for key in reference_index_names]
+            elif type(weights) == list:
+                if len(weights) < len(reference_columns):
+                    return weights + [0] * (len(reference_columns) - len(weights))
+                else:
+                    return weights[0:len(reference_columns)]
+            return weights
+
+        def set_weighted_values(kind):
+
+            if kind == 'ivalue':
+                self.iweights = process_weights(self.iweights, self.d1.columns, self.df.index.names)
+                self.d1 = pd.DataFrame(self.d1.values, index=self.df.index, columns=self.d1.columns)
+                self.d1['ivalue'] = (self.d1*self.iweights).sum(axis=1)
+
+            if kind == 'ovalue':
+                self.oweights = process_weights(self.oweights, self.d2.columns, self.df.columns)
+                self.d2 = pd.DataFrame(self.d2.values, index=self.df.index, columns=self.d2.columns)
+                self.d2['ovalue'] = (self.d2*self.oweights).sum(axis=1)
+
+        set_weighted_values('ivalue')
+        set_weighted_values('ovalue')
+
         # value
+        self.df['ivalue'] = self.d1['ivalue'] if self.iweights else np.nan
+        self.df['ovalue'] = self.d2['ovalue'] if self.oweights else np.nan
+
         if self.iweights and self.oweights:
-            self.df['ivalue'] = self.d1['ivalue']
-            self.df['ovalue'] = self.d2['ovalue']
-            self.df['value'] = self.d2['ovalue']-self.d1['ivalue']
-        elif self.iweights:
-            self.df['ivalue'] = self.d1['ivalue']
-            self.df['ovalue'] = np.nan
-            self.df['value'] = self.d1['ivalue']
-        elif self.oweights:
-            self.df['ivalue'] = np.nan
-            self.df['ovalue'] = self.d2['ovalue']
-            self.df['value'] = self.d2['ovalue']
+            self.df['value'] = self.df['ovalue'] - self.df['ivalue']
+        else:
+            self.df['value'] = self.df['ivalue'] if self.iweights else self.df['ovalue']
+
+
         if dates:
             df = self.df.reset_index()
             if 'time' not in df.columns:
@@ -212,6 +210,7 @@ class Idea():
             df['time'] = df['time'].apply(lambda x: datetime.timedelta(milliseconds=0.001) if x == 0 else x)
             df['date'] = self.start_time + df['time'].cumsum()
             self.df = df.set_index(self.df.index.names+['date'])
+
         if resample:
             if type(resample) in [str]:
                 self.df = self.df.reset_index().set_index('date').resample(resample)
